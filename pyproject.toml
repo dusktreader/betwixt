@@ -1,6 +1,6 @@
 [project]
 name = "betwixt"
-version = "0.1.0"
+version = "0.2.0"
 description = "Betwixt your boundary models lives a new, declarative mapping layer."
 authors = [
     {name = "Tucker Beck", email ="tucker.beck@gmail.com"},
@@ -8,8 +8,8 @@ authors = [
 readme = "README.md"
 license-files = ["LICENSE.md"]
 
-requires-python = ">=3.12, ~=3.14"
-dependencies = []
+requires-python = ">=3.12,<3.15"
+dependencies = ["py-buzz>=0.4"]
 
 
 [project.urls]
@@ -20,10 +20,12 @@ changelog = "https://github.com/dusktreader/betwixt/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 demo = [
-    "rich>=14.0",
+    "rich>=14.0,<15",
     "snick>=3.0",
     "typer>=0.24.1",
 ]
+pydantic = ["pydantic>=2.7,<3"]
+sqlalchemy = ["SQLAlchemy>=2.0,<3"]
 
 [project.scripts]
 betwixt-demo = "betwixt_demo.main:main"
@@ -34,12 +36,16 @@ betwixt-demo = "betwixt_demo.main:main"
 dev = [
     "debugpy>=1.8",
     "ipython>=8.18",
-    "mkdocs-material>=9.6",
-    "mkdocstrings[python]>=0.29",
+    "rich>=14.0,<15",
+    "snick>=3.0",
+    "pydantic>=2.7,<3",
+    "SQLAlchemy>=2.0,<3",
+    "typer>=0.24.1",
+    "zensical==0.0.13",
+    "mkdocstrings[python]>=1.0,<1.1",
     "pyclean>=3.1",
     "pygments>=2.19",
     "pytest>=8.3",
-    "pytest-bdd>=7.0",
     "pytest-cov>=6.0",
     "pytest-mock>=3.14",
     "pytest-pretty>=1.2",
@@ -47,6 +53,7 @@ dev = [
     "ruff>=0.11",
     "ty>=0.0",
     "typos>=1.31",
+    "pre-commit>=4.6.2",
 ]
 
 
@@ -59,7 +66,7 @@ addopts = [
     "--random-order",
     "--cov=src/betwixt",
     "--cov-report=term-missing",
-    "--cov-fail-under=85",
+    "--cov-fail-under=100",
     "--cov-report=xml:.coverage.xml",
     "--junitxml=.junit.xml",
     "--override-ini=junit_family=legacy",
@@ -69,12 +76,13 @@ python_files = ["test_*.py", "*_steps.py"]
 markers = [
     "integration: Integration tests that exercise the real package with no mocking",
     "unit: Fast unit tests with all external dependencies mocked",
+    "absent_extra: Tests run without optional package extras",
 ]
 
 
 [tool.ruff]
 line-length = 120
-src = ["src/betwixt", "tests", "src/betwixt_demo", "examples"]
+src = ["src/betwixt", "tests", "src/betwixt_demo"]
 
 
 [tool.ruff.format]
@@ -86,5 +94,8 @@ extend-ignore-identifiers-re = []
 
 
 [build-system]
-requires = ["uv-build>=0.1.0"]
+requires = ["uv-build>=0.12.6,<0.13"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = ["betwixt", "betwixt_demo"]

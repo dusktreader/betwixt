@@ -2,33 +2,46 @@ name: Docs on main
 run-name: build-docs
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [closed]
     paths:
-      - 'docs/**'
-      - 'src/betwixt/**'
+      - 'docs/source/**'
+      - 'docs/zensical.toml'
 
 jobs:
-  docs:
+  docs-gate:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.merge_commit_sha }}
+    - uses: astral-sh/setup-uv@v6
+    - name: Select an isolated Python environment
+      run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-docs-gate" >> "$GITHUB_ENV"
+    - name: Build and validate documentation
+      run: uv sync --locked --python 3.14 --all-groups
+    - name: Run documentation gate
+      run: uv run --no-sync --python 3.14 pytest -o addopts="" tests/integration/test_docs.py
+    - uses: actions/upload-artifact@v4
+      with:
+        name: betwixt-site
+        path: docs/site
+        retention-days: 14
+
+  deploy:
+    needs: docs-gate
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    environment: github-pages
     permissions:
       contents: write
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@v5
-
-    - name: Set up Python
-      run: uv python install 3.14
-
-    - name: Build Documentation
-      run: |
-        make docs/build
-
+    - name: Download docs-gated site
+      uses: actions/download-artifact@v4
+      with:
+        name: betwixt-site
+        path: docs/site
     - name: Deploy documentation
       uses: peaceiris/actions-gh-pages@v4
       with:

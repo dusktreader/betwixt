@@ -1,6 +1,9 @@
 # Contributing Guidelines
 
-## Security Concerns
+This guide covers security reporting, code contributions, documentation, and local verification.
+
+
+## Security concerns
 
 Before any further discussion, a point about security needs to be addressed:
 
@@ -9,7 +12,7 @@ Before any further discussion, a point about security needs to be addressed:
 > email or some form of private communication. For other issue reports, see below.
 
 
-## Thanks!
+## Thanks
 
 First, thank you for your interest in contributing to betwixt! Even though this is mostly a personal project,
 it takes a bit of work to keep it maintained. All contributions help and improve it.
@@ -51,7 +54,7 @@ reference to the issue that the code addresses. Commit messages should also adhe
 
 Commit messages should look like this:
 
-```
+```text
 fix: Fixed gizmo component that was parfolecting
 
 Addresses Issue #56
@@ -90,8 +93,8 @@ Packages should only be added to the dependency lists if:
 
 Help with documentation is *always* welcome.
 
-The betwixt project uses [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) for document
-generation.
+The betwixt project uses [Zensical](https://zensical.org/) with the Material theme for document generation. Run
+`make docs/build` to build the site and `make docs/serve` to preview it.
 
 Documentation lives in the `docs` subdirectory.
 
@@ -122,7 +125,7 @@ and classes.
 There are some types of contribution that aren't as helpful and are not as welcome:
 
 * Complaints without suggestion
-* Criticism about the overall approach of the extension
+* Criticism about the overall approach of the project
 * Copied code without attribution
 * Promotion of personal packages/projects without due need
 * Sarcasm/ridicule of contributions or design choices

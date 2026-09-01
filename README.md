@@ -3,23 +3,33 @@
 [![Build Status](https://github.com/dusktreader/betwixt/actions/workflows/main.yml/badge.svg)](https://github.com/dusktreader/betwixt/actions/workflows/main.yml)
 [![Documentation Status](https://github.com/dusktreader/betwixt/actions/workflows/docs.yml/badge.svg)](https://dusktreader.github.io/betwixt/)
 
-# betwixt
+# Betwixt
 
-_Betwixt your boundary models lives a new, declarative mapping layer._
+_Betwixt your data models lives a new, delcarative mapping layer._
+
+Betwixt maps peer boundary models without coupling them to one another. The core package supports dataclasses; Pydantic
+and SQLAlchemy adapters are opt-in extras.
 
 
-## Super-quick Start
 
-Requires: Python 3.12 to 3.14
+## Super-quick start
 
-Install through pip:
+Requires Python 3.12 to 3.14.
 
-```bash
+Install the base package through pip:
+
+```shell
 pip install betwixt
+```
+
+Install optional adapter boundaries when needed:
+
+```shell
+pip install "betwixt[pydantic]"
+pip install "betwixt[sqlalchemy]"
 ```
 
 
 ## Documentation
 
-The complete documentation can be found at the
-[betwixt home page](https://dusktreader.github.io/betwixt)
+Dig into the docs on the [Betwixt homepage](https://dusktreader.github.io/betwixt).

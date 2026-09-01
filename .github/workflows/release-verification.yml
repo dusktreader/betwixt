@@ -1,0 +1,67 @@
+name: Release verification
+
+on:
+  workflow_call:
+    outputs:
+      quality:
+        value: ${{ jobs.quality.result == 'success' }}
+      demo:
+        value: ${{ jobs.demo.result == 'success' }}
+      docs:
+        value: ${{ jobs.docs.result == 'success' }}
+      distributions:
+        value: ${{ jobs.distributions.result == 'success' }}
+
+jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
+
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Select an isolated Python environment
+        run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-release-demo" >> "$GITHUB_ENV"
+      - run: uv sync --locked --python 3.14 --all-groups --extra demo --extra pydantic --extra sqlalchemy
+      - run: uv run --no-sync --python 3.14 betwixt-demo --non-interactive
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Select an isolated Python environment
+        run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-release-docs" >> "$GITHUB_ENV"
+      - run: uv sync --locked --python 3.14 --all-groups
+      - run: uv run --no-sync --python 3.14 zensical build --config-file docs/zensical.toml --clean
+
+  distributions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Select an isolated Python environment
+        run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-release-distributions" >> "$GITHUB_ENV"
+      - run: uv sync --locked --python 3.14 --all-groups
+      - run: uv build
+      - name: Verify exactly one wheel and source distribution
+        shell: bash
+        run: |
+          shopt -s nullglob
+          wheels=(dist/*.whl)
+          sdists=(dist/*.tar.gz)
+          test "${#wheels[@]}" -eq 1
+          test "${#sdists[@]}" -eq 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-betwixt-wheel
+          path: dist/*.whl
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-betwixt-sdist
+          path: dist/*.tar.gz
+          if-no-files-found: error
+          retention-days: 14

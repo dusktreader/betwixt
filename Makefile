@@ -1,4 +1,10 @@
 PACKAGE_TARGET:=src/betwixt
+UV_PROJECT_ENVIRONMENT?=$(CURDIR)/.venv
+export UV_PROJECT_ENVIRONMENT
+UV_RUN:=uv run --no-sync
+NO_EXTRAS_TESTS:=tests/integration/test_no_extras.py tests/unit
+NO_EXTRAS_COVERAGE:=--cov=betwixt.annotations --cov=betwixt.adapters.base --cov=betwixt.adapters.dataclass --cov=betwixt.adapters.registry --cov=betwixt.adapters.typeddict --cov=betwixt.betwixt --cov=betwixt.compiler --cov=betwixt.constants --cov=betwixt.constructs --cov=betwixt.errors --cov=betwixt.refs --cov=betwixt.types
+NO_EXTRAS_PYTEST:=-m pytest -o addopts="" --junitxml=.junit.xml $(NO_EXTRAS_COVERAGE) --cov-report=term-missing --cov-report=xml:.coverage.xml --cov-fail-under=100
 
 default: help
 
@@ -8,27 +14,40 @@ default: help
 qa: qa/full  ## Shortcut for qa/full
 
 qa/test:  ## Run all tests (unit + integration)
-	@uv run pytest
+	@$(UV_RUN) pytest
 
 qa/test/unit:  ## Run unit tests only
-	@uv run pytest -m unit tests/unit
+	@$(UV_RUN) pytest -m unit tests/unit
 
 qa/test/integration:  ## Run integration tests only
-	@uv run pytest -m integration tests/integration
+	@$(UV_RUN) pytest -m integration tests/integration
+
+qa/test/no-extras:  ## Run the complete dependency-free core gate against the installed package
+	@set -euo pipefail; \
+	wheel_dir=$$(mktemp -d); \
+	build_cache_dir=$$(mktemp -d); \
+	venv_dir=$$(mktemp -d); \
+	trap 'rm -rf "$$wheel_dir" "$$build_cache_dir" "$$venv_dir"' EXIT; \
+	env -u UV_PROJECT_ENVIRONMENT UV_CACHE_DIR="$$build_cache_dir" uv build --clear --wheel --out-dir "$$wheel_dir" >/dev/null; \
+	wheel=$$(printf '%s\n' "$$wheel_dir"/*.whl); \
+	uv venv "$$venv_dir" >/dev/null; \
+	uv pip install --python "$$venv_dir/bin/python" --no-cache --reinstall --no-deps "$$wheel" >/dev/null; \
+	uv pip install --python "$$venv_dir/bin/python" --no-cache --reinstall py-buzz pytest pytest-cov >/dev/null; \
+	"$$venv_dir/bin/python" $(NO_EXTRAS_PYTEST) $(NO_EXTRAS_TESTS)
 
 qa/types:  ## Run static type checks
-	@uv run --extra demo ty check ${PACKAGE_TARGET} tests src/betwixt_demo
+	@$(UV_RUN) ty check ${PACKAGE_TARGET} tests src/betwixt_demo
 
 qa/lint:  ## Run linters
-	@uv run ruff check ${PACKAGE_TARGET} tests src/betwixt_demo examples
-	@uv run typos ${PACKAGE_TARGET} tests src/betwixt_demo docs/source
+	@$(UV_RUN) ruff check ${PACKAGE_TARGET} tests src/betwixt_demo examples
+	@$(UV_RUN) typos ${PACKAGE_TARGET} tests src/betwixt_demo docs/source
 
 qa/full: qa/test qa/lint qa/types  ## Run the full set of quality checks
 	@echo "All quality checks pass!"
 
 qa/format:  ## Run code formatter
-	@uv run ruff check --select I --fix ${PACKAGE_TARGET} tests src/betwixt_demo examples
-	@uv run ruff format ${PACKAGE_TARGET} tests src/betwixt_demo examples
+	@$(UV_RUN) ruff check --select I --fix ${PACKAGE_TARGET} tests src/betwixt_demo examples
+	@$(UV_RUN) ruff format ${PACKAGE_TARGET} tests src/betwixt_demo examples
 
 
 ## ==== Documentation ==================================================================================================
@@ -36,10 +55,10 @@ qa/format:  ## Run code formatter
 docs: docs/serve  ## Shortcut for docs/serve
 
 docs/build:  ## Build the documentation
-	@uv run mkdocs build --config-file=docs/mkdocs.yaml
+	@$(UV_RUN) zensical build --config-file docs/zensical.toml --clean
 
 docs/serve:  ## Build the docs and start a local dev server
-	@uv run mkdocs serve --config-file=docs/mkdocs.yaml --dev-addr=localhost:10000
+	@$(UV_RUN) zensical serve --config-file docs/zensical.toml
 
 
 
@@ -48,30 +67,23 @@ docs/serve:  ## Build the docs and start a local dev server
 demo: demo/run  ## Shortcut for demo/run
 
 demo/run:  ## Run the demo application
-	@uv run betwixt-demo
+	@$(UV_RUN) betwixt-demo
 
 demo/debug:  ## Run the demo application in debug mode
-	@uv run debugpy --listen localhost:5678 --wait-for-client betwixt-demo
+	@$(UV_RUN) debugpy --listen localhost:5678 --wait-for-client betwixt-demo
 
 
 
 ## ==== Other Commands =================================================================================================
 
-publish: _confirm  ## Publish the package by pushing a tag with the current version
-	@if [[ "$$(git rev-parse --abbrev-ref HEAD)" != "main" ]]; then \
-		echo "You must be on the main branch to publish." && exit 1; \
-	fi
-	@git tag v$$(uv version --short) && git push origin v$$(uv version --short)
-
-
 ## ==== Helpers ========================================================================================================
 
 hooks:  ## Install/update pre-commit hooks
-	@uv run pre-commit install --hook-type=pre-commit --hook-type=pre-push
+	@$(UV_RUN) pre-commit install --hook-type=pre-commit --hook-type=pre-push
 
 clean:  ## Clean up build artifacts and other junk
 	@rm -rf .venv
-	@uv run pyclean . --debris
+	@uv run --isolated --no-project --with pyclean pyclean . --debris
 	@rm -rf dist
 	@rm -rf .ruff_cache
 	@rm -rf .pytest_cache
@@ -86,10 +98,9 @@ help:  ## Show help message
 
 .ONESHELL:
 SHELL:=/bin/bash
-.PHONY: qa qa/test qa/test/unit qa/test/integration qa/types qa/lint qa/full qa/format \
+.PHONY: qa qa/test qa/test/unit qa/test/integration qa/test/no-extras qa/types qa/lint qa/full qa/format \
 	docs docs/build docs/serve \
 	demo demo/run demo/debug \
-	publish \
 	hooks clean help
 
 
@@ -103,14 +114,6 @@ TEAL   := \033[36m
 GRAY   := \033[90m
 CLEAR  := \033[0m
 ITALIC := \033[3m
-
-
-# ..... Hidden auxiliary targets .......................................................................................
-
-_confirm:  # Requires confirmation before proceeding (Do not use directly)
-	@if [[ -z "$(CONFIRM)" ]]; then \
-		echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]; \
-	fi
 
 
 # ..... Help printer ...................................................................................................
