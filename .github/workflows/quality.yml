@@ -1,0 +1,117 @@
+name: Quality
+
+on:
+  workflow_call:
+    inputs:
+      checkout-ref:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  tests:
+    name: test-${{ matrix.python }}-${{ matrix.variant }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.13', '3.14']
+        variant: [base, pydantic, sqlalchemy, combined]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout-ref || github.sha }}
+      - uses: astral-sh/setup-uv@v6
+      - name: Select an isolated Python environment
+        shell: bash
+        run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-${{ matrix.python }}-${{ matrix.variant }}" >> "$GITHUB_ENV"
+      - name: Run tests
+        shell: bash
+        run: |
+          if [[ "${{ matrix.variant }}" == base ]]; then
+            uv sync --locked --python ${{ matrix.python }} --all-groups --extra demo
+          elif [[ "${{ matrix.variant }}" == pydantic ]]; then
+            uv sync --locked --python ${{ matrix.python }} --all-groups --extra demo --extra pydantic
+          elif [[ "${{ matrix.variant }}" == sqlalchemy ]]; then
+            uv sync --locked --python ${{ matrix.python }} --all-groups --extra demo --extra sqlalchemy
+          else
+            uv sync --locked --python ${{ matrix.python }} --all-groups --extra demo --extra pydantic --extra sqlalchemy
+          fi
+          uv run --no-sync --python ${{ matrix.python }} pytest -m "not absent_extra" tests
+          uv run --no-sync --python ${{ matrix.python }} betwixt-demo --non-interactive
+          uv run --no-sync --python ${{ matrix.python }} ruff check src/betwixt tests src/betwixt_demo examples
+          uv run --no-sync --python ${{ matrix.python }} ty check src/betwixt tests src/betwixt_demo examples
+          uv run --no-sync --python ${{ matrix.python }} typos src/betwixt tests src/betwixt_demo docs/source
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-${{ matrix.python }}-${{ matrix.variant }}
+          path: .junit.xml
+          retention-days: 14
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.python }}-${{ matrix.variant }}
+          path: .coverage.xml
+          retention-days: 14
+
+  no-extras-boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout-ref || github.sha }}
+      - uses: astral-sh/setup-uv@v6
+      - name: Verify the package without optional extras
+        run: make qa/test/no-extras
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-no-extras
+          path: .junit.xml
+          retention-days: 14
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-no-extras
+          path: .coverage.xml
+          retention-days: 14
+
+  package-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout-ref || github.sha }}
+      - uses: astral-sh/setup-uv@v6
+      - name: Select an isolated Python environment
+        run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-package-build" >> "$GITHUB_ENV"
+      - run: uv sync --locked --python 3.14 --all-groups
+      - run: uv build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: betwixt-wheel
+          path: dist/*.whl
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: betwixt-sdist
+          path: dist/*.tar.gz
+          retention-days: 14
+
+  docs-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout-ref || github.sha }}
+      - uses: astral-sh/setup-uv@v6
+      - name: Select an isolated Python environment
+        run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-docs-build" >> "$GITHUB_ENV"
+      - run: uv sync --locked --python 3.14 --all-groups
+       - run: uv run --no-sync --python 3.14 zensical build --config-file docs/zensical.toml --clean
+      - uses: actions/upload-artifact@v4
+        with:
+          name: betwixt-site
+          path: docs/site
+          retention-days: 14

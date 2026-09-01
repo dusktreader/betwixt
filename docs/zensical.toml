@@ -1,0 +1,32 @@
+[project]
+site_name = "Betwixt"
+docs_dir = "source"
+site_dir = "site"
+dev_addr = "localhost:10000"
+
+nav = [
+    { Home = "index.md" },
+    { Quickstart = "quickstart.md" },
+    { Concepts = "concepts.md" },
+    { Features = "features.md" },
+    { Examples = "examples.md" },
+    { Cases = ["cases/index.md", "cases/user.md", "cases/payment.md", "cases/order.md"] },
+    { Adapters = "adapters.md" },
+    { Comparison = "comparison.md" },
+    { "API reference" = "api-reference.md" },
+]
+
+[project.theme]
+variant = "classic"
+extra_css = ["source/stylesheets/extra.css"]
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["../src"]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+heading_level = 3
+show_root_heading = true
+separate_signature = true
+show_signature_annotations = true
+show_source = false
+docstring_style = "google"

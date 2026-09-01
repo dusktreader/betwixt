@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import ast
+import importlib.util
 import inspect
 import io
 import re
@@ -68,8 +70,17 @@ def get_demo_functions(module_name: str) -> list[types.FunctionType]:
     Returns:
         List of demo functions sorted by name
     """
+    optional_dependencies = {
+        "pydantic": ("pydantic",),
+        "sqlalchemy": ("sqlalchemy",),
+        "combined": ("pydantic", "sqlalchemy"),
+    }.get(module_name)
+    if optional_dependencies is not None and any(
+        importlib.util.find_spec(dependency) is None for dependency in optional_dependencies
+    ):
+        return []
     demo_functions: list[types.FunctionType] = []
-    module = import_module(f"betwixt_demo.{module_name}")
+    module = import_module(f"betwixt_demo.features.{module_name}")
     for _, obj in inspect.getmembers(module):
         if inspect.isfunction(obj) and obj.__name__.startswith("demo"):
             demo_functions.append(obj)
@@ -97,22 +108,24 @@ def decompose(func: types.FunctionType) -> Decomposed:
     if func.__doc__ is None:
         raise RuntimeError("Can't demo a function with no docstring!")
     docstring = textwrap.dedent(func.__doc__).strip()
-
-    source_lines = inspect.getsourcelines(func)[0]
-    first_quotes = False
-    code_start_index = 0
-    for i, line in enumerate(source_lines):
-        if line.strip() == '"""':
-            if not first_quotes:
-                first_quotes = True
-            else:
-                code_start_index = i
-                break
-    if code_start_index == 0:
+    source_lines, _ = inspect.getsourcelines(func)
+    source_text = textwrap.dedent("".join(source_lines))
+    syntax_tree = ast.parse(source_text)
+    function_node = syntax_tree.body[0]
+    if not isinstance(function_node, (ast.FunctionDef, ast.AsyncFunctionDef)) or not function_node.body:
         raise RuntimeError("Failed to strip function declaration and docstring!")
-    source_lines = [re.sub(r"\s+# pyright.*", "", sl) for sl in source_lines]
-    source_lines = [re.sub(r"\s+# type.*", "", sl) for sl in source_lines]
-    source = textwrap.dedent("".join(source_lines[code_start_index + 1 :]))
+    body = (
+        function_node.body[1:]
+        if isinstance(function_node.body[0], ast.Expr)
+        and isinstance(function_node.body[0].value, ast.Constant)
+        and isinstance(function_node.body[0].value.value, str)
+        else function_node.body
+    )
+    if not body:
+        source = "pass\n"
+    else:
+        source = "\n".join(ast.get_source_segment(source_text, statement) or "" for statement in body) + "\n"
+    source = re.sub(r"\s+# (?:pyright|type).*", "", source)
 
     return Decomposed(module=module, name=name, docstring=docstring, source=source)
 
@@ -175,7 +188,9 @@ def capture(demo: types.FunctionType) -> Captured:
     return cap
 
 
-def run_demo(demo: types.FunctionType, console: Console, override_label: str | None = None) -> bool:
+def run_demo(
+    demo: types.FunctionType, console: Console, override_label: str | None = None, *, interactive: bool = True
+) -> bool:
     """
     Run a demo function and display its output.
 
@@ -197,9 +212,7 @@ def run_demo(demo: types.FunctionType, console: Console, override_label: str | N
         BlankLine,
         BlankLine,
         Panel(
-            Markdown(
-                f"```python\n{decomposed.source}\n```"
-            ),
+            Markdown(f"```python\n{decomposed.source}\n```"),
             title=f"Here is the source code for [yellow]{decomposed.name}()[/yellow]",
             title_align="left",
             padding=1,
@@ -309,6 +322,9 @@ def run_demo(demo: types.FunctionType, console: Console, override_label: str | N
     )
     console.print(BlankLine)
     console.print(BlankLine)
+    if cap.error is not None or cap.exit_code not in (None, 0):
+        return False
+    if not interactive:
+        return True
     further: bool = Confirm.ask("Would you like to continue?", default=True)
     return further
-

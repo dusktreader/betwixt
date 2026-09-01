@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+      - id: full-quality-check
+        name: full quality check
+        entry: make qa/full
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]

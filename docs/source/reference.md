@@ -1,3 +1,0 @@
-# betwixt Reference
-
-::: betwixt

@@ -3,15 +3,19 @@ run-name: deploy-on-tag
 
 on:
   push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
-      - 'v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+'
+    tags: ['v*.*.*']
 
 jobs:
+  verification:
+    uses: ./.github/workflows/release-verification.yml
+
   deploy:
+    needs: verification
+    if: needs.verification.outputs.quality == 'true' && needs.verification.outputs.demo == 'true' && needs.verification.outputs.docs == 'true' && needs.verification.outputs.distributions == 'true'
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
+      contents: read
       id-token: write
 
     steps:
@@ -19,16 +23,28 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v6
 
-    - name: Set up Python
-      run: uv python install 3.14
+    - name: Download verified wheel
+      uses: actions/download-artifact@v4
+      with:
+        name: release-betwixt-wheel
+        path: dist
 
-    - name: Check Quality
-      run: make qa/full
+    - name: Download verified source distribution
+      uses: actions/download-artifact@v4
+      with:
+        name: release-betwixt-sdist
+        path: dist
 
-    - name: Build package
-      run: uv build
+    - name: Verify downloaded distributions
+      shell: bash
+      run: |
+        shopt -s nullglob
+        wheels=(dist/*.whl)
+        sdists=(dist/*.tar.gz)
+        test "${#wheels[@]}" -eq 1
+        test "${#sdists[@]}" -eq 1
 
-    - name: Publish package
-      run: uv publish
+    - name: Publish verified package
+      run: uv publish dist/*.whl dist/*.tar.gz
