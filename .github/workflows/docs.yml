@@ -6,7 +6,7 @@ on:
     types: [closed]
     paths:
       - 'docs/source/**'
-       - 'docs/zensical.toml'
+      - 'docs/zensical.toml'
 
 jobs:
   docs-gate:

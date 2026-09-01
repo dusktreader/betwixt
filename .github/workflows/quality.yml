@@ -109,7 +109,7 @@ jobs:
       - name: Select an isolated Python environment
         run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-docs-build" >> "$GITHUB_ENV"
       - run: uv sync --locked --python 3.14 --all-groups
-       - run: uv run --no-sync --python 3.14 zensical build --config-file docs/zensical.toml --clean
+      - run: uv run --no-sync --python 3.14 zensical build --config-file docs/zensical.toml --clean
       - uses: actions/upload-artifact@v4
         with:
           name: betwixt-site
