@@ -2,20 +2,17 @@ name: Docs on main
 run-name: build-docs
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches: [main]
     paths:
       - 'docs/source/**'
       - 'docs/zensical.toml'
 
 jobs:
   docs-gate:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.merge_commit_sha }}
     - uses: astral-sh/setup-uv@v6
     - name: Select an isolated Python environment
       run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-docs-gate" >> "$GITHUB_ENV"
@@ -31,7 +28,6 @@ jobs:
 
   deploy:
     needs: docs-gate
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     environment: github-pages
     permissions:
