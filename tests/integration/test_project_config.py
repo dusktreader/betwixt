@@ -37,6 +37,7 @@ def test_ci_preserves_quality_and_docs_boundaries() -> None:
     assert "package-build:" in quality and "docs-build:" in quality
 
     docs = (ROOT / ".github/workflows/docs.yml").read_text()
+    assert "workflow_dispatch:" in docs
     assert "push:" in docs
     assert "branches: [main]" in docs
     assert "docs/source/**" in docs and "docs/zensical.toml" in docs
