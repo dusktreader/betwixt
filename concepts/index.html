@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://dusktreader.github.io/betwixt/quickstart/">
+        <link rel="canonical" href="https://dusktreader.github.io/betwixt/concepts/">
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../quickstart/">
       
       
-        <link rel="next" href="../concepts/">
+        <link rel="next" href="../features/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>Quickstart - Betwixt</title>
+        <title>Concepts - Betwixt</title>
       
     
     
@@ -112,7 +112,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#quickstart" class="md-skip">
+        <a href="#concepts" class="md-skip">
           Skip to content
         </a>
       
@@ -147,7 +147,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Quickstart
+              Concepts
             
           </span>
         </div>
@@ -267,6 +267,33 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -286,7 +313,7 @@
   <span class="md-ellipsis">
     
   
-    Quickstart
+    Concepts
   
 
     
@@ -304,7 +331,7 @@
   <span class="md-ellipsis">
     
   
-    Quickstart
+    Concepts
   
 
     
@@ -331,10 +358,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
+  <a href="#why-betwixt" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Requirements
+        Why Betwixt
       
     </span>
   </a>
@@ -342,10 +369,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#field-references" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Installation
+        Field references
       
     </span>
   </a>
@@ -353,10 +380,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using" class="md-nav__link">
+  <a href="#construct-taxonomy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using
+        Construct taxonomy
       
     </span>
   </a>
@@ -364,10 +391,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-next" class="md-nav__link">
+  <a href="#callable-and-context-rules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What next?
+        Callable and context rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's next
       
     </span>
   </a>
@@ -378,33 +416,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../concepts/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Concepts
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -738,10 +749,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
+  <a href="#why-betwixt" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Requirements
+        Why Betwixt
       
     </span>
   </a>
@@ -749,10 +760,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#field-references" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Installation
+        Field references
       
     </span>
   </a>
@@ -760,10 +771,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using" class="md-nav__link">
+  <a href="#construct-taxonomy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using
+        Construct taxonomy
       
     </span>
   </a>
@@ -771,10 +782,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-next" class="md-nav__link">
+  <a href="#callable-and-context-rules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What next?
+        Callable and context rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's next
       
     </span>
   </a>
@@ -796,67 +818,123 @@
                 
                   
 
-<h1 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h1>
-<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
+<h1 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link">&para;</a></h1>
+<p>A declared Betwixt subclass describes how two data types relate without requiring either type to know
+about the other or how fields should be mapped between the two. This allows the data types to remain focused on their
+domain and purpose.</p>
+<p>Adapters provide the common language for inspecting fields and constructing native values, while directional constructs
+describe the transformations that cannot be inferred. The sections below introduce those pieces and the rules that make
+a mapping predictable.</p>
+<h2 id="why-betwixt">Why Betwixt<a class="headerlink" href="#why-betwixt" title="Permanent link">&para;</a></h2>
+<p>Betwixt keeps peer models independent while making asymmetric translation explicit. An API request model, a domain
+model, an ORM row, and a response model may describe the same concept with different ownership and validation rules.</p>
+<p>For example, a Pydantic API schema often needs translation logic before it can become a SQLAlchemy model. Encoding that
+logic through Pydantic aliases, validators, serializers, or SQLAlchemy properties and events fits poorly when the logic
+belongs to the boundary between the two types. It dilutes the purpose of each model and fragments the translation story
+across several framework-specific locations.</p>
+<p>A declared <code>Betwixt</code> subclass makes that boundary visible in one place without adding framework-specific methods to
+either type. Direction is explicit, so a write-only secret or a computed response field cannot accidentally acquire an
+inverse.</p>
+<h2 id="field-references">Field references<a class="headerlink" href="#field-references" title="Permanent link">&para;</a></h2>
+<p>A field reference is a typed handle to one field on one side of a mapping. It tells a construct both which model owns
+the field and which canonical Python name to use. That information matters because the same field may have a different
+name outside the model: a Pydantic field can serialize as <code>emailAddress</code>, a SQLAlchemy attribute can use the
+<code>email_address</code> column, and a <code>TypedDict</code> adapter still works with the dictionary's declared Python key.</p>
+<p>The declaration should therefore use <code>R.email</code>, not an external alias such as <code>emailAddress</code> or <code>email_address</code>. Field
+refs also let Betwixt reject misspelled or foreign fields when the child class is declared. They are defined inside the
+child class that uses them, immediately after <code>left</code> and <code>right</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">AccountTwixt</span><span class="p">(</span><span class="n">Betwixt</span><span class="p">):</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">left</span> <span class="o">=</span> <span class="n">AccountRequest</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">right</span> <span class="o">=</span> <span class="n">AccountRow</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span> <span class="o">=</span> <span class="n">field_refs</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">email</span> <span class="o">=</span> <span class="n">map_pairwise</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">R</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">rightward</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">leftward</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+</span></code></pre></div>
+<p>The adapters handle serialization and persistence names at their own boundaries. Declarations and partial mappings
+remain stable because they use canonical Python field names.</p>
+<h2 id="construct-taxonomy">Construct taxonomy<a class="headerlink" href="#construct-taxonomy" title="Permanent link">&para;</a></h2>
+<p>The public taxonomy contains exactly seventeen factories. Pairwise constructs require both directional callables;
+directional constructs execute only in the named direction. The class-body order determines producer order, and a later
+write replaces an earlier write for the same destination.</p>
+<p>Maps receive referenced source values in declaration order. Expansions receive one source value and return a tuple whose
+items fill multiple destination references in declaration order. Reductions receive a complete source object,
+projections return a complete destination object, and nested declarations delegate scalar or supported container values
+to another <code>Betwixt</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Constructs</th>
+<th>Directional behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maps</td>
+<td><code>map_pairwise</code>, <code>map_rightward</code>, <code>map_leftward</code></td>
+<td>Transform referenced field values in reference order</td>
+</tr>
+<tr>
+<td>Expansions</td>
+<td><code>expand_rightward</code>, <code>expand_leftward</code></td>
+<td>Fan one value out to ordered destination fields</td>
+</tr>
+<tr>
+<td>Reductions</td>
+<td><code>reduce_rightward</code>, <code>reduce_leftward</code></td>
+<td>Transform a complete source object</td>
+</tr>
+<tr>
+<td>Projections</td>
+<td><code>project_rightward</code>, <code>project_leftward</code></td>
+<td>Return a complete destination-shaped object</td>
+</tr>
+<tr>
+<td>Nested</td>
+<td><code>nested_pairwise</code>, <code>nested_rightward</code>, <code>nested_leftward</code></td>
+<td>Delegate scalar or supported containers to another mapping</td>
+</tr>
+<tr>
+<td>Controls</td>
+<td><code>disable_implicit_pairwise</code>, <code>disable_implicit_rightward</code>, <code>disable_implicit_leftward</code></td>
+<td>Suppress compatible same-name implicit producers</td>
+</tr>
+</tbody>
+</table>
+<p>There are no <code>reduce_pairwise</code> or <code>project_pairwise</code> aliases. Class-body order is the callable ordering rule, so later
+writes replace earlier writes.</p>
+<p>An expansion has one source reference and at least two destination references. Its callable must return a tuple with
+exactly the destination arity. The matching directional partial operation requires only that one source key and returns
+all expanded destination keys; the opposite direction is not inferred.</p>
+<h2 id="callable-and-context-rules">Callable and context rules<a class="headerlink" href="#callable-and-context-rules" title="Permanent link">&para;</a></h2>
+<p>The compiler validates callable signatures when the declaration is built. Direct map, reduction, projection, and nested
+callables receive referenced values in declaration order. A final keyword-only parameter named <code>ctx</code> receives the
+operation context as <code>ctx=...</code>; positional <code>ctx</code> parameters are invalid. Nested context selectors instead receive the
+outer context as exactly one positional argument, once per nested boundary, and their result is reused for every
+element.</p>
+<p>The operation signatures are <code>rightward(value, *, context=None)</code> and <code>leftward(value, *, context=None)</code>. Context is
+often where application-specific details belong, such as a currency policy, tenant, or feature flag. Giving that context
+a type makes those dependencies visible to anyone reading the callable and gives type checkers and editors enough
+information to catch a misspelled field or an incompatible value before the mapping runs. Such a type is not required,
+but it is recommended for any non-trivial context.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nd">@dataclass</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">CurrencyContext</span><span class="p">:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">minor_units</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">currency</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">cents_to_dollars</span><span class="p">(</span><span class="n">cents</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">CurrencyContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="k">return</span> <span class="n">cents</span> <span class="o">/</span> <span class="n">ctx</span><span class="o">.</span><span class="n">minor_units</span>
+</span></code></pre></div>
+<p>The callable's <code>ctx</code> annotation now documents exactly what it expects. Betwixt passes the context object unchanged and
+does not validate or coerce its contents.</p>
+<h2 id="whats-next">What's next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Python 3.12 to 3.14</li>
-</ul>
-<p>This example crosses a dataclass boundary on the left with a <code>TypedDict</code> boundary on the right.</p>
-<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p>!!! note We use <code>uv</code>
-    The documentation here assumes you will be using <code>uv</code>. However, you can install <code>betwixt</code> via pip, poetry, hatch,
-    etc. in the same way.</p>
-<p>Install the latest version from PyPI:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt
-</span></code></pre></div>
-<p>You may also install optional integrations if you need them:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt<span class="o">[</span>pydantic<span class="o">]</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt<span class="o">[</span>sqlalchemy<span class="o">]</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt<span class="o">[</span>pydantic,sqlalchemy<span class="o">]</span>
-</span></code></pre></div>
-<h2 id="using">Using<a class="headerlink" href="#using" title="Permanent link">&para;</a></h2>
-<p>First, declare a derived <code>Betwixt</code> class that describes the mapping between your two models:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">betwixt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Betwixt</span><span class="p">,</span> <span class="n">field_refs</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="nd">@dataclass</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">Person</span><span class="p">:</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent the source person.&quot;&quot;&quot;</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="k">class</span><span class="w"> </span><span class="nc">PersonView</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent the destination person view.&quot;&quot;&quot;</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>
-</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="k">class</span><span class="w"> </span><span class="nc">PersonTwixt</span><span class="p">(</span><span class="n">Betwixt</span><span class="p">):</span>
-</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Map compatible same-name fields without explicit declarations.&quot;&quot;&quot;</span>
-</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>
-</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>    <span class="n">left</span> <span class="o">=</span> <span class="n">Person</span>
-</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="n">right</span> <span class="o">=</span> <span class="n">PersonView</span>
-</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>    <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span> <span class="o">=</span> <span class="n">field_refs</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
-</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>
-</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>
-</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="n">person_view</span> <span class="o">=</span> <span class="n">PersonTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">rightward</span><span class="p">(</span><span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ada&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">36</span><span class="p">))</span>
-</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="n">person</span> <span class="o">=</span> <span class="n">PersonTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">leftward</span><span class="p">(</span><span class="n">person_view</span><span class="p">)</span>
-</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="n">partial_view</span> <span class="o">=</span> <span class="n">PersonTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">rightward_partial</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Ada&quot;</span><span class="p">})</span>
-</span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="n">partial_person</span> <span class="o">=</span> <span class="n">PersonTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">leftward_partial</span><span class="p">({</span><span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">36</span><span class="p">})</span>
-</span></code></pre></div>
-<p>Full operations return a <code>PersonView</code> plain dict on the right and a <code>Person</code> instance in reverse. Partial operations
-accept only canonical source mappings and return sparse plain dictionaries; they never apply defaults or construct a
-destination.</p>
-<h2 id="what-next">What next?<a class="headerlink" href="#what-next" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Go deeper in the  <a href="../concepts/">Concepts</a> to better understand what <code>Betwixt</code> is all about.</li>
-<li>Check out the <a href="../cases/">Case Studies</a> to learn how the <code>Betwixt</code> patterns can be applied in real use-cases.</li>
+<li>Read the <a href="../features/">feature guide</a> for detailed explanations and focused examples.</li>
+<li>Browse the <a href="../examples/">reference examples</a> for complete standalone source files.</li>
+<li>Explore the <a href="../cases/">case studies</a> to see the concepts applied to realistic boundaries.</li>
+<li>Check the <a href="../adapters/">adapter guide</a> for TypedDict, Pydantic, SQLAlchemy, and custom adapters.</li>
 </ul>
 
 

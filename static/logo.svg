@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 702.09351 247.06384"
+   width="702.09351"
+   height="247.06384"
+   role="img"
+   aria-labelledby="title desc"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="logo.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   inkscape:export-filename="logo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="0.57777778"
+     inkscape:cx="372.98077"
+     inkscape:cy="496.73077"
+     inkscape:window-width="1396"
+     inkscape:window-height="829"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg10" />
+  <title
+     id="title">Betwixt — Declarative Model Mapping</title>
+  <desc
+     id="desc">
+    Betwixt wordmark with two opposing sigmoid arrows forming the X,
+    representing bidirectional data translation.
+  </desc>
+  <defs
+     id="defs6">
+    <linearGradient
+       id="linearGradient10"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#8b5cf6;stop-opacity:1;"
+         offset="0"
+         id="stop8" />
+      <stop
+         style="stop-color:#8b5cf6;stop-opacity:0.49803922;"
+         offset="0.75449103"
+         id="stop9" />
+      <stop
+         style="stop-color:#8b5cf6;stop-opacity:0;"
+         offset="1"
+         id="stop10" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient7"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#34d399;stop-opacity:0;"
+         offset="0"
+         id="stop5" />
+      <stop
+         style="stop-color:#34d399;stop-opacity:0.49803922;"
+         offset="0.25449103"
+         id="stop6" />
+      <stop
+         style="stop-color:#34d399;stop-opacity:1;"
+         offset="1"
+         id="stop7" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient54"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#047857;stop-opacity:1;"
+         offset="0"
+         id="stop52" />
+      <stop
+         style="stop-color:#047857;stop-opacity:1;"
+         offset="0.75496691"
+         id="stop53" />
+      <stop
+         style="stop-color:#047857;stop-opacity:0;"
+         offset="1"
+         id="stop54" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient51"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#6d28d9;stop-opacity:1;"
+         offset="0"
+         id="stop49" />
+      <stop
+         style="stop-color:#6d28d9;stop-opacity:1;"
+         offset="0.75165564"
+         id="stop50" />
+      <stop
+         style="stop-color:#6d28d9;stop-opacity:0;"
+         offset="1"
+         id="stop51" />
+    </linearGradient>
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect18"
+       is_visible="true"
+       lpeversion="1.3"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false"
+       uniform="false" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect14"
+       is_visible="true"
+       lpeversion="1.3"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false"
+       uniform="false" />
+    <filter
+       id="wordmark-keyline"
+       x="-0.054101825"
+       y="-0.026819048"
+       width="1.1082037"
+       height="1.0536381">
+      <feMorphology
+         in="SourceAlpha"
+         operator="dilate"
+         radius="1.5"
+         result="expanded"
+         id="feMorphology5" />
+      <feFlood
+         flood-color="#FFFFFF"
+         flood-opacity="0.95"
+         result="white"
+         id="feFlood5" />
+      <feComposite
+         in="white"
+         in2="expanded"
+         operator="in"
+         result="outline"
+         id="feComposite5" />
+      <feMerge
+         id="feMerge6">
+        <feMergeNode
+           in="outline"
+           id="feMergeNode5" />
+        <feMergeNode
+           in="SourceGraphic"
+           id="feMergeNode6" />
+      </feMerge>
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient54"
+       id="linearGradient56"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="rotate(180,515.5451,117.77619)"
+       x1="401.54147"
+       y1="126.77341"
+       x2="1015.2161"
+       y2="126.77341" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7"
+       id="linearGradient57"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(13.6952,-17.815868)"
+       x1="0.011733242"
+       y1="141.21857"
+       x2="687.69836"
+       y2="141.21857" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient51"
+       id="linearGradient58"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,-1,13.6952,235.55239)"
+       x1="57.217232"
+       y1="125.9226"
+       x2="682.97443"
+       y2="125.9226" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient10"
+       id="linearGradient59"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,-1,13.6952,235.55239)"
+       x1="-13.6952"
+       y1="111.43824"
+       x2="685.5061"
+       y2="111.43824" />
+  </defs>
+  <text
+     x="84.695198"
+     y="162.18414"
+     fill="#101c36"
+     stroke="#ffffff"
+     stroke-width="2.5"
+     paint-order="stroke fill"
+     font-family="Inter, 'Avenir Next', 'Helvetica Neue', Arial, sans-serif"
+     font-size="150px"
+     font-weight="750"
+     letter-spacing="-7"
+     filter="url(#wordmark-keyline)"
+     id="text54"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:150px;font-family:Inter;-inkscape-font-specification:'Inter, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-7;fill:#17233f;fill-opacity:1;stroke:#ffffff;stroke-width:2.5;paint-order:stroke fill;filter:url(#wordmark-keyline)">Betwi</text>
+  <text
+     x="557.86829"
+     y="163.48224"
+     fill="#101c36"
+     stroke="#ffffff"
+     stroke-width="2.5"
+     paint-order="stroke fill"
+     font-family="Inter, 'Avenir Next', 'Helvetica Neue', Arial, sans-serif"
+     font-size="150px"
+     font-weight="750"
+     letter-spacing="-7"
+     filter="url(#wordmark-keyline)"
+     id="text55"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:150px;font-family:Inter;-inkscape-font-specification:'Inter, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-7;fill:#17233f;fill-opacity:1;stroke:#ffffff;stroke-width:2.5;paint-order:stroke fill;filter:url(#wordmark-keyline)">t</text>
+  <path
+     id="path55"
+     style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;fill:url(#linearGradient58);fill-opacity:0.992157;stroke:url(#linearGradient59);stroke-width:5;stroke-dasharray:none;stroke-opacity:1;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+     d="m 652.66981,6.0884324 c -14.52449,0.30568 -28.77676,1.12218 -42.36328,2.97851 -27.17305,3.7126696 -52.32156,11.6161196 -70.31055,29.7558596 -17.98911,18.13986 -26.06856,43.16671 -32.74805,66.632808 -6.67948,23.4661 -12.20438,45.91808 -19.76757,58.07032 -7.5632,12.15223 -16.75366,17.30204 -35.51758,20.5957 -18.76392,3.29366 -46.08166,3.26103 -83.1582,3.21875 -73.56198,-0.0839 -184.24158,0.39403 -295.216802,0.87695 L 73.765512,161.34819 39.3827,180.89702 4.9998876,200.44585 39.120981,220.4478 l 34.121094,20.00195 0.179687,-27.13281 c 111.067508,-0.48333 221.868458,-0.96076 295.353518,-0.87695 37.00714,0.0422 64.8801,0.3796 87.52734,-3.59571 22.64724,-3.97531 41.08658,-13.73489 52.48828,-32.05468 11.40171,-18.3198 16.17649,-41.9043 22.59766,-64.46289 6.42116,-22.558588 14.24468,-43.542958 26.42969,-55.830078 12.18512,-12.28724 31.48038,-19.22589 55.88672,-22.56055 24.40633,-3.33465 53.28885,-3.03701 82.64648,-2.66406 l 0.31836,-25.0976596 c -14.67882,-0.1864704 -29.47552,-0.3916104 -44,-0.0859 z" />
+  <path
+     id="path56"
+     style="baseline-shift:baseline;display:inline;overflow:visible;fill:url(#linearGradient56);stroke:url(#linearGradient57);stroke-width:5;stroke-dasharray:none;stroke-opacity:1;enable-background:accumulate;stop-color:#000000"
+     d="m 349.56434,2.506392 c -84.82152,0.0846 -209.25673,1.01174 -333.691406,1.9375 l 0.1875,25.09961 c 124.434676,-0.92575 248.866076,-1.85113 333.529296,-1.93554 42.33161,-0.0422 74.44781,0.23522 97.54297,4.03515 23.09516,3.79993 36.15274,10.25959 45.53125,22.78711 9.37855,12.52758 15.80847,34.40673 21.26367,57.337888 5.4552,22.93116 9.90827,46.63304 20.32227,65.0879 10.41408,18.45501 26.84401,28.68032 43.77148,33.32031 16.73341,4.58678 34.13694,4.67649 50.64649,4.875 l 0.18359,27.66601 34.12109,-20.00195 34.1211,-20.00195 -34.38282,-19.54883 -34.38281,-19.54883 0.17383,26.33203 c -16.29119,-0.20779 -31.64061,-0.63298 -43.8457,-3.97851 -12.4662,-3.41711 -21.46524,-8.89775 -28.54688,-21.44727 -7.08173,-12.54968 -12.19176,-35.14894 -17.76172,-58.5625 C 532.77759,82.545962 526.72057,58.038432 512.7577,39.387252 498.79478,20.736022 477.65757,11.227552 451.20692,6.8755324 424.75627,2.523512 391.9751,2.464102 349.56434,2.506392 Z" />
+</svg>
