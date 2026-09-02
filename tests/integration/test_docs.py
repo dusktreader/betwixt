@@ -19,6 +19,9 @@ def test_zensical_builds_the_documented_api() -> None:
     assert 'href="stylesheets/extra.css"' in index
     assert '<img src="static/icon.png" alt="logo">' in index
     assert '<link rel="icon" href="static/icon.png">' in index
+    assert 'href="https://github.com/dusktreader/betwixt"' in index
+    assert '<div class="md-source__repository">\n    dusktreader/betwixt\n  </div>' in index
+    assert '<path fill="currentColor" d="M173.9 397.4' in index
     assert 'aria-label="Switch to dark mode"' in index
     assert 'aria-label="Switch to light mode"' in index
     assert (ROOT / "docs/site/static/icon.png").is_file()

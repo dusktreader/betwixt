@@ -4,6 +4,8 @@ docs_dir = "source"
 site_dir = "site"
 dev_addr = "localhost:10000"
 site_url = "https://dusktreader.github.io/betwixt/"
+repo_url = "https://github.com/dusktreader/betwixt"
+repo_name = "dusktreader/betwixt"
 extra_css = ["stylesheets/extra.css"]
 
 nav = [
@@ -26,6 +28,9 @@ palette = [
     { scheme = "default", primary = "deep purple", accent = "teal", toggle = { icon = "lucide/moon", name = "Switch to dark mode" } },
     { scheme = "slate", primary = "deep purple", accent = "teal", toggle = { icon = "lucide/sun", name = "Switch to light mode" } },
 ]
+
+[project.theme.icon]
+repo = "fontawesome/brands/github"
 
 [project.plugins.mkdocstrings.handlers.python]
 paths = ["../src"]

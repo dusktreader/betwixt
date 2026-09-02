@@ -21,12 +21,15 @@ def test_project_metadata_declares_supported_variants_and_gate() -> None:
     theme = (ROOT / "docs/zensical.toml").read_text()
     assert 'variant = "classic"' in theme
     assert 'site_url = "https://dusktreader.github.io/betwixt/"' in theme
+    assert 'repo_url = "https://github.com/dusktreader/betwixt"' in theme
+    assert 'repo_name = "dusktreader/betwixt"' in theme
     assert 'extra_css = ["stylesheets/extra.css"]' in theme
     assert 'logo = "static/icon.png"' in theme
     assert 'favicon = "static/icon.png"' in theme
     assert 'scheme = "default"' in theme and 'scheme = "slate"' in theme
     assert 'primary = "deep purple"' in theme and 'accent = "teal"' in theme
     assert 'icon = "lucide/moon"' in theme and 'icon = "lucide/sun"' in theme
+    assert 'repo = "fontawesome/brands/github"' in theme
     assert 'name = "Switch to dark mode"' in theme and 'name = "Switch to light mode"' in theme
     assert (ROOT / "docs/source/stylesheets/extra.css").is_file()
 
