@@ -29,8 +29,8 @@ jobs:
 
   deploy:
     needs: docs-gate
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment: github-pages
     permissions:
       contents: write
     steps:

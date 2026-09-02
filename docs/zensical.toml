@@ -3,6 +3,8 @@ site_name = "Betwixt"
 docs_dir = "source"
 site_dir = "site"
 dev_addr = "localhost:10000"
+site_url = "https://dusktreader.github.io/betwixt/"
+extra_css = ["stylesheets/extra.css"]
 
 nav = [
     { Home = "index.md" },
@@ -18,7 +20,12 @@ nav = [
 
 [project.theme]
 variant = "classic"
-extra_css = ["source/stylesheets/extra.css"]
+logo = "static/icon.png"
+favicon = "static/icon.png"
+palette = [
+    { scheme = "default", primary = "deep purple", accent = "teal", toggle = { icon = "lucide/moon", name = "Switch to dark mode" } },
+    { scheme = "slate", primary = "deep purple", accent = "teal", toggle = { icon = "lucide/sun", name = "Switch to light mode" } },
+]
 
 [project.plugins.mkdocstrings.handlers.python]
 paths = ["../src"]

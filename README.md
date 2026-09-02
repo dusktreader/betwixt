@@ -3,13 +3,12 @@
 [![Build Status](https://github.com/dusktreader/betwixt/actions/workflows/main.yml/badge.svg)](https://github.com/dusktreader/betwixt/actions/workflows/main.yml)
 [![Documentation Status](https://github.com/dusktreader/betwixt/actions/workflows/docs.yml/badge.svg)](https://dusktreader.github.io/betwixt/)
 
-# Betwixt
+![Betwixt logo](docs/source/static/logo.png)
 
-_Betwixt your data models lives a new, delcarative mapping layer._
+_Betwixt your data models lives a new, declarative mapping layer._
 
 Betwixt maps peer boundary models without coupling them to one another. The core package supports dataclasses; Pydantic
 and SQLAlchemy adapters are opt-in extras.
-
 
 
 ## Super-quick start

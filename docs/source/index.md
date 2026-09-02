@@ -1,6 +1,9 @@
 # Betwixt
 
+![Betwixt logo](static/logo.png)
+
 _Betwixt your data models lives a new, declarative mapping layer._
+
 
 
 ## Overview
@@ -38,9 +41,8 @@ assert Mapping().rightward(Left(3)) == Right(3)
 ```
 
 
-## What next?
+## What next
 
 - Start with the [quickstart](quickstart.md), then follow the User, Payment, and Order cases.
 - Learn the basic [Concepts](concepts.md) to better understand what `Betwixt` is all about.
 - Read the [Comparison](comparison.md) to see how `Betwixt` cleanly replaces fragmented translation machinery.
-

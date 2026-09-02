@@ -15,6 +15,24 @@ def test_zensical_builds_the_documented_api() -> None:
     """Build the site and verify that mkdocstrings rendered the public API."""
     subprocess.run(["make", "docs/build"], cwd=ROOT, check=True, capture_output=True, text=True)
     assert (ROOT / "docs/site/index.html").is_file()
+    index = (ROOT / "docs/site/index.html").read_text()
+    assert 'href="stylesheets/extra.css"' in index
+    assert '<img src="static/icon.png" alt="logo">' in index
+    assert '<link rel="icon" href="static/icon.png">' in index
+    assert 'aria-label="Switch to dark mode"' in index
+    assert 'aria-label="Switch to light mode"' in index
+    assert (ROOT / "docs/site/static/icon.png").is_file()
+    stylesheet = (ROOT / "docs/site/stylesheets/extra.css").read_text()
+    assert '[data-md-color-scheme="default"]' in stylesheet
+    assert '[data-md-color-scheme="slate"]' in stylesheet
+    assert stylesheet.count("--md-primary-fg-color: #17233f;") == 2
+    assert stylesheet.count("--md-primary-bg-color: #ffffff;") == 2
+    assert '[data-md-color-scheme="slate"] .md-nav__item--section > .md-nav__link' in stylesheet
+    for color in ("#17233f", "#6d28d9", "#8b5cf6", "#047857", "#34d399"):
+        assert color in stylesheet
+    not_found = (ROOT / "docs/site/404.html").read_text()
+    assert 'href="/betwixt/stylesheets/extra.css"' in not_found
+    assert 'src="/betwixt/static/icon.png"' in not_found
     api = (ROOT / "docs/site/api-reference/index.html").read_text()
     assert "Betwixt" in api
     assert "field_refs" in api

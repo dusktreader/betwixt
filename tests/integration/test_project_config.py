@@ -20,7 +20,14 @@ def test_project_metadata_declares_supported_variants_and_gate() -> None:
     assert '"--cov-fail-under=100"' in metadata
     theme = (ROOT / "docs/zensical.toml").read_text()
     assert 'variant = "classic"' in theme
-    assert 'extra_css = ["source/stylesheets/extra.css"]' in theme
+    assert 'site_url = "https://dusktreader.github.io/betwixt/"' in theme
+    assert 'extra_css = ["stylesheets/extra.css"]' in theme
+    assert 'logo = "static/icon.png"' in theme
+    assert 'favicon = "static/icon.png"' in theme
+    assert 'scheme = "default"' in theme and 'scheme = "slate"' in theme
+    assert 'primary = "deep purple"' in theme and 'accent = "teal"' in theme
+    assert 'icon = "lucide/moon"' in theme and 'icon = "lucide/sun"' in theme
+    assert 'name = "Switch to dark mode"' in theme and 'name = "Switch to light mode"' in theme
     assert (ROOT / "docs/source/stylesheets/extra.css").is_file()
 
 
@@ -41,9 +48,10 @@ def test_ci_preserves_quality_and_docs_boundaries() -> None:
     assert "push:" in docs
     assert "branches: [main]" in docs
     assert "docs/source/**" in docs and "docs/zensical.toml" in docs
-    assert "github-pages" in docs
+    assert "environment: github-pages" not in docs
     assert "docs-gate:" in docs
     assert "needs: docs-gate" in docs
+    assert "if: github.ref == 'refs/heads/main'" in docs
     assert "actions/download-artifact@v4" in docs
     assert "name: betwixt-site" in docs
     assert 'pytest -o addopts="" tests/integration/test_docs.py' in docs
