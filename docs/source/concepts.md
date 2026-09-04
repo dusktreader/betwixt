@@ -67,7 +67,7 @@ in both directions. Disable it when you need one-way behavior.
 
 ## Mapping building blocks
 
-Betwixt provides six kinds of mapping building blocks. Across these families, the public API contains exactly seventeen
+Betwixt provides six kinds of mapping building blocks. Across these families, the public API contains exactly several
 factories, which are the functions you use to describe how data should move. Names ending in `_rightward` move data from
 left to right, while names ending in `_leftward` move it in the opposite direction. `pairwise` functions handle both
 directions in one declaration.
