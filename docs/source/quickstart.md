@@ -16,15 +16,15 @@ Use Python 3.12 to 3.14.
 Install the latest version from PyPI:
 
 ```shell
-uv add betwixt
+uv add betwixt-data
 ```
 
 Add an optional integration when your project uses Pydantic or SQLAlchemy:
 
 ```shell
-uv add "betwixt[pydantic]"
-uv add "betwixt[sqlalchemy]"
-uv add "betwixt[pydantic,sqlalchemy]"
+uv add "betwixt-data[pydantic]"
+uv add "betwixt-data[sqlalchemy]"
+uv add "betwixt-data[pydantic,sqlalchemy]"
 ```
 
 

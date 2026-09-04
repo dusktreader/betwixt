@@ -1,4 +1,4 @@
-[![Latest Version](https://img.shields.io/pypi/v/betwixt?label=pypi-version&logo=python&style=plastic)](https://pypi.org/project/betwixt/)
+[![Latest Version](https://img.shields.io/pypi/v/betwixt-data?label=pypi-version&logo=python&style=plastic)](https://pypi.org/project/betwixt-data/)
 [![Python Versions](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fdusktreader%2Fbetwixt%2Fmain%2Fpyproject.toml&style=plastic&logo=python&label=python-versions)](https://www.python.org/)
 [![Build Status](https://github.com/dusktreader/betwixt/actions/workflows/main.yml/badge.svg)](https://github.com/dusktreader/betwixt/actions/workflows/main.yml)
 [![Documentation Status](https://github.com/dusktreader/betwixt/actions/workflows/docs.yml/badge.svg)](https://dusktreader.github.io/betwixt/)
@@ -24,8 +24,8 @@ pip install betwixt
 Install optional adapter boundaries when needed:
 
 ```shell
-pip install "betwixt[pydantic]"
-pip install "betwixt[sqlalchemy]"
+pip install "betwixt-data[pydantic]"
+pip install "betwixt-data[sqlalchemy]"
 ```
 
 
