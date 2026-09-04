@@ -11,6 +11,7 @@ ROOT = Path(__file__).parents[2]
 def test_project_metadata_declares_supported_variants_and_gate() -> None:
     """Check the public package metadata without depending on a TOML library."""
     metadata = (ROOT / "pyproject.toml").read_text()
+    assert 'name = "betwixt-data"' in metadata
     assert 'requires-python = ">=3.12,<3.15"' in metadata
     assert '"pydantic>=2.7,<3"' in metadata
     assert '"SQLAlchemy>=2.0,<3"' in metadata
@@ -57,7 +58,7 @@ def test_ci_preserves_quality_and_docs_boundaries() -> None:
     assert "if: github.ref == 'refs/heads/main'" in docs
     assert "actions/download-artifact@v4" in docs
     assert "name: betwixt-site" in docs
-    assert 'pytest -o addopts="" tests/integration/test_docs.py' in docs
+    assert "run: make docs/build" in docs
 
 
 @pytest.mark.integration

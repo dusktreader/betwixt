@@ -3,7 +3,7 @@ from importlib import metadata
 
 
 def get_version_from_metadata() -> str:
-    return metadata.version(__package__ or __name__)
+    return metadata.version("betwixt-data")
 
 
 def get_version_from_pyproject() -> str:

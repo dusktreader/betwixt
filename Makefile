@@ -17,10 +17,10 @@ qa/test:  ## Run all tests (unit + integration)
 	@$(UV_RUN) pytest
 
 qa/test/unit:  ## Run unit tests only
-	@$(UV_RUN) pytest -m unit tests/unit
+	@$(UV_RUN) pytest --cov-fail-under=0 -m unit tests/unit
 
 qa/test/integration:  ## Run integration tests only
-	@$(UV_RUN) pytest -m integration tests/integration
+	@$(UV_RUN) pytest --cov-fail-under=0 -m integration tests/integration
 
 qa/test/no-extras:  ## Run the complete dependency-free core gate against the installed package
 	@set -euo pipefail; \

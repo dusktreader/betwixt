@@ -18,7 +18,7 @@ Requires Python 3.12 to 3.14.
 Install the base package through pip:
 
 ```shell
-pip install betwixt
+pip install betwixt-data
 ```
 
 Install optional adapter boundaries when needed:
