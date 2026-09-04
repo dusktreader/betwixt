@@ -14,7 +14,7 @@
         <link rel="prev" href="../payment/">
       
       
-        <link rel="next" href="../../adapters/">
+        <link rel="next" href="../checkout/">
       
       
         
@@ -613,6 +613,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../checkout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkout case
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -758,10 +786,10 @@
 
 
 <h1 id="order-case">Order case<a class="headerlink" href="#order-case" title="Permanent link">&para;</a></h1>
-<p>The Order case composes the other ideas. The shared fixture contains an <code>identifier</code>, an optional <code>address</code>, a list of
-<code>items</code>, and an optional <code>note</code>; it does not contain a customer field. Nested mappings preserve scalar, optional, and
-list shapes, while a context derivation passes an order-level request context to every line-item mapping once per
-nested boundary.</p>
+<p>Orders bring several mapping ideas together. This example contains an <code>identifier</code>, an optional <code>address</code>, a list of
+<code>items</code>, and an optional <code>note</code>. It does not contain a customer field.
+Nested mappings preserve scalar, optional, and list shapes. A context derivation passes order-level request context to
+every line-item mapping once per nested boundary.</p>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
@@ -795,8 +823,8 @@ nested boundary.</p>
 </span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="n">translated</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">rightward</span><span class="p">(</span><span class="n">Order</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;minor_units&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
 </span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="n">patch</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">rightward_partial</span><span class="p">({</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">[]})</span>
 </span></code></pre></div>
-<p>The patch is sparse: omitted fields remain omitted, present <code>None</code> remains present, and defaults never appear in a
-partial result.</p>
+<p>The patch is sparse: omitted fields stay omitted, present <code>None</code> stays present, and defaults never appear in a partial
+result.</p>
 
 
 

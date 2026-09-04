@@ -552,6 +552,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cases/checkout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkout case
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -654,10 +682,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-boundary-problem" class="md-nav__link">
+  <a href="#the-problem-at-the-boundary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The boundary problem
+        The problem at the boundary
       
     </span>
   </a>
@@ -665,10 +693,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-explicit-relationship" class="md-nav__link">
+  <a href="#put-the-relationship-in-one-place" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The explicit relationship
+        Put the relationship in one place
       
     </span>
   </a>
@@ -749,10 +777,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-boundary-problem" class="md-nav__link">
+  <a href="#the-problem-at-the-boundary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The boundary problem
+        The problem at the boundary
       
     </span>
   </a>
@@ -760,10 +788,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-explicit-relationship" class="md-nav__link">
+  <a href="#put-the-relationship-in-one-place" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The explicit relationship
+        Put the relationship in one place
       
     </span>
   </a>
@@ -800,15 +828,14 @@
 
 
 <h1 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h1>
-<p>Applications regularly carry the same concept through several boundaries: a web request, a domain object, a persistence
-record, a message, or a response. Each representation has its own ownership, validation rules, naming, and shape, so
-translation logic appears wherever those representations meet. When that logic is spread across the models on either
-side,
-it becomes difficult to discover, test, and keep symmetric where symmetry is intended.</p>
-<p>Pydantic and SQLAlchemy provide a concrete example of this broader problem. Each library does its own job well. The
-friction appears at the boundary, where one representation has to become the other. Betwixt makes that translation a
-named, inspectable relationship instead of scattering it across model configuration and framework hooks.</p>
-<h2 id="the-boundary-problem">The boundary problem<a class="headerlink" href="#the-boundary-problem" title="Permanent link">&para;</a></h2>
+<p>Most applications represent the same thing in several places. It might appear as a web request, an application model, a
+database row, a message, or a response. Each version has its own job, so the names, validation, and shape can differ.
+Without a clear home, conversion rules end up scattered across the models at each boundary. That makes them harder to
+find, test, and keep in sync.</p>
+<p>Pydantic and SQLAlchemy make this problem easy to see. Each library does its own job well. The friction appears when one
+representation needs to become the other. Betwixt gives that conversion a name and a home. That keeps it out of model
+settings and framework-specific hooks.</p>
+<h2 id="the-problem-at-the-boundary">The problem at the boundary<a class="headerlink" href="#the-problem-at-the-boundary" title="Permanent link">&para;</a></h2>
 <p>Consider an API account with a display name and a dollar balance. The database stores first and last names separately,
 keeps money as integer cents, and uses storage-specific column names:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">AccountRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -823,9 +850,8 @@ keeps money as integer cents, and uses storage-specific column names:</p>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">last_name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="s2">&quot;family_name&quot;</span><span class="p">)</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">amount_cents</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="s2">&quot;balance_cents&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<p>One common alternative is to make each framework participate in the conversion. The request model may normalize or split
-the display name, the ORM model may expose convenience properties, and the endpoint may still need to convert dollars to
-cents:</p>
+<p>One way to handle this is to make each framework help with the conversion. The request model can split the display name,
+the database model can expose convenience properties, and the endpoint can convert dollars to cents:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">AccountRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;displayName&quot;</span><span class="p">)</span>
@@ -858,14 +884,13 @@ cents:</p>
 </span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>        <span class="n">balanceDollars</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">balance_dollars</span><span class="p">,</span>
 </span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>    <span class="p">)</span>
 </span></code></pre></div>
-<p>This can work, but the request and response rules are now distributed across model methods, ORM properties, and endpoint
-code. It is easy for one direction to change without updating the other, and the boundary behavior is no longer visible
-from one declaration.</p>
-<p>You can imagine that as a project grows and complexity increases, the mappings grow more scattered and obsfucated by
-other business logic. Understanding how one data type is translated to the other can become a chore.</p>
-<h2 id="the-explicit-relationship">The explicit relationship<a class="headerlink" href="#the-explicit-relationship" title="Permanent link">&para;</a></h2>
-<p>Betwixt keeps the models focused and puts the representation differences in one declaration. The field refs use
-canonical Python attributes, not <code>displayName</code>, <code>given_name</code>, or <code>balance_cents</code>:</p>
+<p>This can work, but the request and response rules are now spread across model methods, database properties, and endpoint
+code. One direction can change without the other being updated, and you cannot see the whole conversion in one place.</p>
+<p>As the project grows, conversion rules can get mixed in with unrelated business logic. Finding out how one model becomes
+another turns into detective work.</p>
+<h2 id="put-the-relationship-in-one-place">Put the relationship in one place<a class="headerlink" href="#put-the-relationship-in-one-place" title="Permanent link">&para;</a></h2>
+<p>Betwixt keeps each model focused and puts the differences in one mapping. The field references use the model's canonical
+Python attributes, not <code>displayName</code>, <code>given_name</code>, or <code>balance_cents</code>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">betwixt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Betwixt</span><span class="p">,</span> <span class="n">expand_rightward</span><span class="p">,</span> <span class="n">field_refs</span><span class="p">,</span> <span class="n">map_leftward</span><span class="p">,</span> <span class="n">map_pairwise</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
@@ -890,17 +915,18 @@ canonical Python attributes, not <code>displayName</code>, <code>given_name</cod
 </span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="n">leftward</span><span class="o">=</span><span class="k">lambda</span> <span class="n">cents</span><span class="p">:</span> <span class="n">cents</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
 </span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>    <span class="p">)</span>
 </span></code></pre></div>
-<p>The same <code>AccountTwixt</code> produces the ORM row for a request and reconstructs the API model for a response:</p>
+<p>A single <code>AccountTwixt</code> can create the database row from a request and rebuild the API model for a response:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">account</span> <span class="o">=</span> <span class="n">AccountRequest</span><span class="p">(</span><span class="n">displayName</span><span class="o">=</span><span class="s2">&quot;Ada Lovelace&quot;</span><span class="p">,</span> <span class="n">balanceDollars</span><span class="o">=</span><span class="mf">123.45</span><span class="p">)</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">row</span> <span class="o">=</span> <span class="n">AccountTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">rightward</span><span class="p">(</span><span class="n">account</span><span class="p">)</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">response</span> <span class="o">=</span> <span class="n">AccountTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">leftward</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 </span></code></pre></div>
-<p>The declaration names both directions and puts the split, merge, and cents conversion next to one another. Pydantic
-still validates its native model, SQLAlchemy still owns its ORM model, and the mapping layer owns only the translation
-between them. The shared <code>id</code> field is not declared because its name and type already match; Betwixt maps it implicitly.
-That separation makes the boundary easier to understand, test, and change.</p>
-<p>Betwixt is not a serializer, validator, ORM, or schema generator. It is the explicit peer-to-peer translation layer
-between those concerns.</p>
+<p>The declaration names both directions and keeps the split, merge, and cents conversion together.</p>
+<p>Pydantic still validates its model. SQLAlchemy still manages its database model. The mapping owns only the conversion
+between them.</p>
+<p>The shared <code>id</code> field already matches on both sides, so Betwixt maps it automatically. This makes the boundary easier to
+understand, test, and change.</p>
+<p>Betwixt is not a serializer, validator, ORM, or schema generator. It is the place where those different models are
+explicitly translated into one another.</p>
 <h2 id="whats-next">What's next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Read the <a href="../features/">feature guide</a> for the individual mapping constructs.</li>

@@ -613,6 +613,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../checkout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkout case
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -758,10 +786,9 @@
 
 
 <h1 id="payment-case">Payment case<a class="headerlink" href="#payment-case" title="Permanent link">&para;</a></h1>
-<p>The Payment case demonstrates an intentionally asymmetric boundary. A left-side amount in cents becomes a right-side
-decimal amount, while the reverse direction converts dollars back to cents with its own callable. Both directions
-receive
-the keyword-only <code>ctx</code> context for the minor-unit policy and currency.</p>
+<p>Payments often use different representations in different parts of an application. This example keeps the amount in
+cents on one side and converts it to dollars on the other. The reverse direction has its own conversion back to cents.
+Both directions receive the keyword-only <code>ctx</code> context, which supplies the minor-unit policy and currency.</p>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>

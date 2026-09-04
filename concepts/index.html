@@ -402,10 +402,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#construct-taxonomy" class="md-nav__link">
+  <a href="#mapping-directions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Construct taxonomy
+        Mapping directions
       
     </span>
   </a>
@@ -413,10 +413,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#callable-and-context-rules" class="md-nav__link">
+  <a href="#mapping-building-blocks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Callable and context rules
+        Mapping building blocks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions-and-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions and context
       
     </span>
   </a>
@@ -655,6 +666,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cases/checkout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkout case
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -793,10 +832,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#construct-taxonomy" class="md-nav__link">
+  <a href="#mapping-directions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Construct taxonomy
+        Mapping directions
       
     </span>
   </a>
@@ -804,10 +843,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#callable-and-context-rules" class="md-nav__link">
+  <a href="#mapping-building-blocks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Callable and context rules
+        Mapping building blocks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions-and-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions and context
       
     </span>
   </a>
@@ -844,116 +894,131 @@
 
 
 <h1 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link">&para;</a></h1>
-<p>A declared Betwixt subclass describes how two data types relate without requiring either type to know
-about the other or how fields should be mapped between the two. This allows the data types to remain focused on their
-domain and purpose.</p>
-<p>Adapters provide the common language for inspecting fields and constructing native values, while directional constructs
-describe the transformations that cannot be inferred. The sections below introduce those pieces and the rules that make
-a mapping predictable.</p>
+<p>Think of a Betwixt mapping as a translator between two versions of the same information. One model might call a field
+<code>emailAddress</code>, while another calls it <code>email_address</code>; the mapping knows those fields correspond and how to convert the
+value. Neither model needs to know about the other, and the translation rules stay in one place.</p>
+<p>Simple mappings can often connect fields automatically. If a value needs special handling, you add an explicit mapping
+function. A mapping can also turn one field into several. For more involved cases, it can combine values, build a new
+object, or reuse another mapping for nested data. It can also use extra context, such as a currency or tenant.</p>
+<p>Adapters help Betwixt read fields and create values for each model. The sections below explain these building blocks and
+the rules that keep mappings predictable.</p>
 <h2 id="why-betwixt">Why Betwixt<a class="headerlink" href="#why-betwixt" title="Permanent link">&para;</a></h2>
-<p>Betwixt keeps peer models independent while making asymmetric translation explicit. An API request model, a domain
-model, an ORM row, and a response model may describe the same concept with different ownership and validation rules.</p>
-<p>For example, a Pydantic API schema often needs translation logic before it can become a SQLAlchemy model. Encoding that
-logic through Pydantic aliases, validators, serializers, or SQLAlchemy properties and events fits poorly when the logic
-belongs to the boundary between the two types. It dilutes the purpose of each model and fragments the translation story
-across several framework-specific locations.</p>
-<p>A declared <code>Betwixt</code> subclass makes that boundary visible in one place without adding framework-specific methods to
-either type. Direction is explicit, so a write-only secret or a computed response field cannot accidentally acquire an
-inverse.</p>
+<p>Most applications represent the same information in several ways. An API request, an application's main model, a
+database row, and an API response may all describe a user, but each has its own fields and responsibilities.</p>
+<p>When data moves between those models, it is tempting to put conversion rules wherever they fit: Pydantic aliases and
+validators, SQLAlchemy properties and events, or helper methods in the application's own models. That scatters one
+translation across several places and makes it harder to see what happens.</p>
+<p>Betwixt gives those rules their own home. A mapping connects models without making them depend on each other, and it
+makes direction explicit. A write-only secret can flow into a database record without creating a reverse path, while a
+computed response field can be produced without being written back.</p>
 <h2 id="field-references">Field references<a class="headerlink" href="#field-references" title="Permanent link">&para;</a></h2>
-<p>A field reference is a typed handle to one field on one side of a mapping. It tells a construct both which model owns
-the field and which canonical Python name to use. That information matters because the same field may have a different
-name outside the model: a Pydantic field can serialize as <code>emailAddress</code>, a SQLAlchemy attribute can use the
-<code>email_address</code> column, and a <code>TypedDict</code> adapter still works with the dictionary's declared Python key.</p>
-<p>The declaration should therefore use <code>R.email</code>, not an external alias such as <code>emailAddress</code> or <code>email_address</code>. Field
-refs also let Betwixt reject misspelled or foreign fields when the child class is declared. They are defined inside the
-child class that uses them, immediately after <code>left</code> and <code>right</code>:</p>
+<p>A field reference is Betwixt's way of pointing to a particular field on one model. It tells Betwixt which model owns the
+field and which canonical Python name to use. That matters because the same field can have a different name outside the
+model: a Pydantic field may appear as <code>emailAddress</code> in JSON, a SQLAlchemy attribute may map to an <code>email_address</code>
+column, and a <code>TypedDict</code> adapter still uses the dictionary's declared Python key.</p>
+<p>Use <code>R.email</code> in the mapping, not an external alias such as <code>emailAddress</code> or <code>email_address</code>. Field references also let
+Betwixt catch misspelled fields and fields from the wrong model when you declare the mapping. Define them inside the
+mapping class, immediately after <code>left</code> and <code>right</code>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">AccountTwixt</span><span class="p">(</span><span class="n">Betwixt</span><span class="p">):</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">left</span> <span class="o">=</span> <span class="n">AccountRequest</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">right</span> <span class="o">=</span> <span class="n">AccountRow</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span> <span class="o">=</span> <span class="n">field_refs</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">email</span> <span class="o">=</span> <span class="n">map_pairwise</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">R</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">rightward</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">leftward</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
 </span></code></pre></div>
-<p>The adapters handle serialization and persistence names at their own boundaries. Declarations and partial mappings
-remain stable because they use canonical Python field names.</p>
-<h2 id="construct-taxonomy">Construct taxonomy<a class="headerlink" href="#construct-taxonomy" title="Permanent link">&para;</a></h2>
-<p>The public taxonomy contains exactly seventeen factories. Pairwise constructs require both directional callables;
-directional constructs execute only in the named direction. The class-body order determines producer order, and a later
-write replaces an earlier write for the same destination.</p>
-<p>Maps receive referenced source values in declaration order. Expansions receive one source value and return a tuple whose
-items fill multiple destination references in declaration order. Reductions receive a complete source object,
-projections return a complete destination object, and nested declarations delegate scalar or supported container values
-to another <code>Betwixt</code>.</p>
+<p>The adapters handle JSON and database names at their own boundaries. Your mapping stays stable because it uses canonical
+Python field names.</p>
+<h2 id="mapping-directions">Mapping directions<a class="headerlink" href="#mapping-directions" title="Permanent link">&para;</a></h2>
+<p>Every Betwixt mapping has a <code>left</code> model and a <code>right</code> model. These are labels you choose. Left does not mean input, and
+right does not mean output. The "side" that a model occupies is arbitrary.</p>
+<p>The direction names describe the movement of data. A <code>rightward</code> operation moves data from left to right, while a
+<code>leftward</code> operation moves it from right to left. A <code>pairwise</code> operation describes both trips.</p>
+<p>That means a mapping can be one-way when only one direction makes sense. For example, a secret might move from an API
+request into a database record, while a computed display name might move from a database record into an API response.
+An explicitly one-way operation does not invent reverse behavior.</p>
+<p>Compatible same-name fields are different: Betwixt may create an implicit pairwise mapping for them. That mapping works
+in both directions. Disable it when you need one-way behavior.</p>
+<h2 id="mapping-building-blocks">Mapping building blocks<a class="headerlink" href="#mapping-building-blocks" title="Permanent link">&para;</a></h2>
+<p>Betwixt provides six kinds of mapping building blocks. Across these families, the public API contains exactly several
+factories, which are the functions you use to describe how data should move. Names ending in <code>_rightward</code> move data from
+left to right, while names ending in <code>_leftward</code> move it in the opposite direction. <code>pairwise</code> functions handle both
+directions in one declaration.</p>
+<p>Functions that receive several fields get them in reference order, the order in which those fields appear in the
+mapping's class body. In other words, class-body order is significant.</p>
+<p>When several mapping operations write to the same destination field, the one declared later wins. The order of your
+declarations therefore matters.</p>
+<p>Here is the main job of each family:</p>
 <table>
 <thead>
 <tr>
 <th>Family</th>
-<th>Constructs</th>
-<th>Directional behavior</th>
+<th>Functions</th>
+<th>What they do</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Maps</td>
 <td><code>map_pairwise</code>, <code>map_rightward</code>, <code>map_leftward</code></td>
-<td>Transform referenced field values in reference order</td>
+<td>Change one or more field values</td>
 </tr>
 <tr>
 <td>Expansions</td>
 <td><code>expand_rightward</code>, <code>expand_leftward</code></td>
-<td>Fan one value out to ordered destination fields</td>
+<td>Split one value into several fields</td>
 </tr>
 <tr>
 <td>Reductions</td>
 <td><code>reduce_rightward</code>, <code>reduce_leftward</code></td>
-<td>Transform a complete source object</td>
+<td>Use a complete source object to produce destination data</td>
 </tr>
 <tr>
 <td>Projections</td>
 <td><code>project_rightward</code>, <code>project_leftward</code></td>
-<td>Return a complete destination-shaped object</td>
+<td>Build a complete destination object</td>
 </tr>
 <tr>
 <td>Nested</td>
 <td><code>nested_pairwise</code>, <code>nested_rightward</code>, <code>nested_leftward</code></td>
-<td>Delegate scalar or supported containers to another mapping</td>
+<td>Reuse another mapping for nested data</td>
 </tr>
 <tr>
 <td>Controls</td>
 <td><code>disable_implicit_pairwise</code>, <code>disable_implicit_rightward</code>, <code>disable_implicit_leftward</code></td>
-<td>Suppress compatible same-name implicit producers</td>
+<td>Turn off automatic same-name mappings</td>
 </tr>
 </tbody>
 </table>
-<p>There are no <code>reduce_pairwise</code> or <code>project_pairwise</code> aliases. Class-body order is the callable ordering rule, so later
-writes replace earlier writes.</p>
-<p>An expansion has one source reference and at least two destination references. Its callable must return a tuple with
-exactly the destination arity. The matching directional partial operation requires only that one source key and returns
-all expanded destination keys; the opposite direction is not inferred.</p>
-<h2 id="callable-and-context-rules">Callable and context rules<a class="headerlink" href="#callable-and-context-rules" title="Permanent link">&para;</a></h2>
-<p>The compiler validates callable signatures when the declaration is built. Direct map, reduction, projection, and nested
-callables receive referenced values in declaration order. A final keyword-only parameter named <code>ctx</code> receives the
-operation context as <code>ctx=...</code>; positional <code>ctx</code> parameters are invalid. Nested context selectors instead receive the
-outer context as exactly one positional argument, once per nested boundary, and their result is reused for every
-element.</p>
-<p>The operation signatures are <code>rightward(value, *, context=None)</code> and <code>leftward(value, *, context=None)</code>. Context is
-often where application-specific details belong, such as a currency policy, tenant, or feature flag. Giving that context
-a type makes those dependencies visible to anyone reading the callable and gives type checkers and editors enough
-information to catch a misspelled field or an incompatible value before the mapping runs. Such a type is not required,
-but it is recommended for any non-trivial context.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nd">@dataclass</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">CurrencyContext</span><span class="p">:</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">minor_units</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">currency</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">cents_to_dollars</span><span class="p">(</span><span class="n">cents</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">CurrencyContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="k">return</span> <span class="n">cents</span> <span class="o">/</span> <span class="n">ctx</span><span class="o">.</span><span class="n">minor_units</span>
+<p>Reductions and projections only work in one direction. That is why there are no <code>reduce_pairwise</code> or <code>project_pairwise</code>
+aliases.</p>
+<p>An expansion starts with one source field and fills at least two destination fields. Its function returns one tuple item
+per destination field, in order. Betwixt does not infer the reverse direction; define it explicitly when you need it.</p>
+<h2 id="functions-and-context">Functions and context<a class="headerlink" href="#functions-and-context" title="Permanent link">&para;</a></h2>
+<p>Mapping functions are ordinary Python functions. Betwixt checks their signatures when you create the mapping and passes
+referenced field values in the order in which you list them in the mapping declaration.</p>
+<p>You can pass extra information to a mapping when you run it:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">mapping</span><span class="o">.</span><span class="n">rightward</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">mapping</span><span class="o">.</span><span class="n">leftward</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
 </span></code></pre></div>
-<p>The callable's <code>ctx</code> annotation now documents exactly what it expects. Betwixt passes the context object unchanged and
-does not validate or coerce its contents.</p>
+<p>To use that context inside a mapping function, add a final keyword-only parameter named <code>ctx</code>. Betwixt passes it as
+<code>ctx=...</code>. A positional <code>ctx</code> parameter is not valid. Context is useful for application-specific details such as a
+currency policy, tenant, or feature flag.</p>
+<p>Nested context selectors receive the outer context as one positional argument. Betwixt calls them once at each nested
+boundary and reuses the result for every item there.</p>
+<p>Giving your context a type documents what the function expects and helps type checkers and editors catch mistakes before
+the mapping runs. The type is optional, but it is useful for any non-trivial context.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nd">@dataclass</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">CurrencyContext</span><span class="p">:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">minor_units</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">currency</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">cents_to_dollars</span><span class="p">(</span><span class="n">cents</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">CurrencyContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="k">return</span> <span class="n">cents</span> <span class="o">/</span> <span class="n">ctx</span><span class="o">.</span><span class="n">minor_units</span>
+</span></code></pre></div>
+<p>The function's <code>ctx</code> annotation documents exactly what it expects. Betwixt passes the context object unchanged and does
+not validate or coerce its contents.</p>
 <h2 id="whats-next">What's next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Read the <a href="../features/">feature guide</a> for detailed explanations and focused examples.</li>

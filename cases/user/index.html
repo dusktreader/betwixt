@@ -613,6 +613,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../checkout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkout case
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -758,13 +786,14 @@
 
 
 <h1 id="user-case">User case<a class="headerlink" href="#user-case" title="Permanent link">&para;</a></h1>
-<p>The User case is the running boundary narrative: an ORM row and an API response are peers, not parent and child
-classes. The optional fixture uses <code>email</code> as its canonical Python attribute while its database column uses a different
-name. Betwixt maps that attribute to a Pydantic response, applies an explicit display-name transform, and
-leaves validation to Pydantic. The shared dataclass fixture has no default declaration, so missing required fields are
-reported rather than silently filled. No engine or session is needed.</p>
+<p>An API response and a database row can describe the same user without being built the same way.
+In this example, <code>email</code> is the canonical Python attribute, even though the database column has a different name.
+Betwixt maps that attribute to a Pydantic response, applies an explicit display-name transform, and leaves validation to
+Pydantic.</p>
+<p>The dataclass in this example has no default declaration, so Betwixt reports missing required fields instead of quietly
+filling them. No database engine or session is needed.</p>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
-<p>The example also performs a partial patch with canonical keys. A source serialization alias never changes those keys.</p>
+<p>The example also performs a partial patch with canonical keys. A serialization alias never changes those keys.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">betwixt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Betwixt</span><span class="p">,</span> <span class="n">field_refs</span><span class="p">,</span> <span class="n">map_pairwise</span>

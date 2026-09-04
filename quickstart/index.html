@@ -375,10 +375,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using" class="md-nav__link">
+  <a href="#your-first-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using
+        Your first mapping
       
     </span>
   </a>
@@ -386,10 +386,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-next" class="md-nav__link">
+  <a href="#whats-next" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What next?
+        What's next
       
     </span>
   </a>
@@ -644,6 +644,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cases/checkout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkout case
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -782,10 +810,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using" class="md-nav__link">
+  <a href="#your-first-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using
+        Your first mapping
       
     </span>
   </a>
@@ -793,10 +821,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-next" class="md-nav__link">
+  <a href="#whats-next" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What next?
+        What's next
       
     </span>
   </a>
@@ -822,25 +850,23 @@
 
 
 <h1 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h1>
+<p>This short example builds a mapping between two small Python models and shows the result in both directions.</p>
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Python 3.12 to 3.14</li>
-</ul>
-<p>This example crosses a dataclass boundary on the left with a <code>TypedDict</code> boundary on the right.</p>
+<p>Use Python 3.12 to 3.14.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p>!!! note We use <code>uv</code>
-    The documentation here assumes you will be using <code>uv</code>. However, you can install <code>betwixt</code> via pip, poetry, hatch,
-    etc. in the same way.</p>
+<p>!!! note Using <code>uv</code>
+    These examples use <code>uv</code>, but you can install <code>betwixt</code> with pip, Poetry, Hatch, or another Python package manager.</p>
 <p>Install the latest version from PyPI:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt-data
 </span></code></pre></div>
-<p>You may also install optional integrations if you need them:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt<span class="o">[</span>pydantic<span class="o">]</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt<span class="o">[</span>sqlalchemy<span class="o">]</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>uv<span class="w"> </span>add<span class="w"> </span>betwixt<span class="o">[</span>pydantic,sqlalchemy<span class="o">]</span>
+<p>Add an optional integration when your project uses Pydantic or SQLAlchemy:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;betwixt-data[pydantic]&quot;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>uv<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;betwixt-data[sqlalchemy]&quot;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>uv<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;betwixt-data[pydantic,sqlalchemy]&quot;</span>
 </span></code></pre></div>
-<h2 id="using">Using<a class="headerlink" href="#using" title="Permanent link">&para;</a></h2>
-<p>First, declare a derived <code>Betwixt</code> class that describes the mapping between your two models:</p>
+<h2 id="your-first-mapping">Your first mapping<a class="headerlink" href="#your-first-mapping" title="Permanent link">&para;</a></h2>
+<p>This example maps a dataclass to a <code>TypedDict</code>. The two models have the same fields, so Betwixt can connect them without
+explicit field mappings.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
@@ -874,14 +900,21 @@
 </span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="n">person</span> <span class="o">=</span> <span class="n">PersonTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">leftward</span><span class="p">(</span><span class="n">person_view</span><span class="p">)</span>
 </span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="n">partial_view</span> <span class="o">=</span> <span class="n">PersonTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">rightward_partial</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Ada&quot;</span><span class="p">})</span>
 </span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="n">partial_person</span> <span class="o">=</span> <span class="n">PersonTwixt</span><span class="p">()</span><span class="o">.</span><span class="n">leftward_partial</span><span class="p">({</span><span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">36</span><span class="p">})</span>
+</span><span id="__span-2-34"><a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>
+</span><span id="__span-2-35"><a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="k">assert</span> <span class="n">person_view</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Ada&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">36</span><span class="p">}</span>
+</span><span id="__span-2-36"><a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a><span class="k">assert</span> <span class="n">person</span> <span class="o">==</span> <span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ada&quot;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
+</span><span id="__span-2-37"><a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a><span class="k">assert</span> <span class="n">partial_view</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Ada&quot;</span><span class="p">}</span>
+</span><span id="__span-2-38"><a id="__codelineno-2-38" name="__codelineno-2-38" href="#__codelineno-2-38"></a><span class="k">assert</span> <span class="n">partial_person</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">36</span><span class="p">}</span>
 </span></code></pre></div>
-<p>Full operations return a <code>PersonView</code> plain dict on the right and a <code>Person</code> instance in reverse. Partial operations
-accept only canonical source mappings and return sparse plain dictionaries; they never apply defaults or construct a
-destination.</p>
-<h2 id="what-next">What next?<a class="headerlink" href="#what-next" title="Permanent link">&para;</a></h2>
+<p>The <code>rightward</code> call moves a <code>Person</code> to the right-hand model. <code>leftward</code> moves it back.
+Because the field names and types match, Betwixt maps <code>name</code> and <code>age</code> automatically.</p>
+<p>The two partial calls show how to translate only the fields you have. They accept plain dictionaries with the model's
+canonical field names and return sparse dictionaries. They leave missing fields missing instead of applying defaults or
+constructing a destination model.</p>
+<h2 id="whats-next">What's next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Go deeper in the  <a href="../concepts/">Concepts</a> to better understand what <code>Betwixt</code> is all about.</li>
-<li>Check out the <a href="../cases/">Case Studies</a> to learn how the <code>Betwixt</code> patterns can be applied in real use-cases.</li>
+<li>Read the <a href="../concepts/">concepts</a> guide for the ideas behind these mappings.</li>
+<li>Explore the <a href="../cases/">case studies</a> for more realistic examples.</li>
 </ul>
 
 

@@ -510,10 +510,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-case-studies" class="md-nav__link">
+  <a href="#why-these-examples" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why case studies
+        Why these examples
       
     </span>
   </a>
@@ -611,6 +611,34 @@
     
   
     Order case
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="checkout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkout case
   
 
     
@@ -740,10 +768,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-case-studies" class="md-nav__link">
+  <a href="#why-these-examples" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why case studies
+        Why these examples
       
     </span>
   </a>
@@ -780,20 +808,21 @@
 
 
 <h1 id="case-studies">Case studies<a class="headerlink" href="#case-studies" title="Permanent link">&para;</a></h1>
-<p>These case studies show where an explicit boundary mapping earns its keep.</p>
-<h2 id="why-case-studies">Why case studies<a class="headerlink" href="#why-case-studies" title="Permanent link">&para;</a></h2>
-<p>The core examples introduce individual constructs in isolation. These cases put those constructs into recognizable
-application boundaries, where models have different owners, representations, validation rules, and directions of flow.
-They show the decisions a mapping makes without pretending that every boundary can be inferred automatically.</p>
+<p>These examples show how Betwixt helps when the same data appears in different parts of an application.</p>
+<h2 id="why-these-examples">Why these examples<a class="headerlink" href="#why-these-examples" title="Permanent link">&para;</a></h2>
+<p>The core examples introduce one feature at a time. These cases put those features into familiar situations, such as an
+API talking to a database or an order containing several items. Each model has its own job, so the fields, names, and
+directions can differ.</p>
+<p>The examples show which conversions you need to describe and which straightforward fields Betwixt can handle for you.
+They also show where an explicit choice is better than guessing.</p>
 <h2 id="cases">Cases<a class="headerlink" href="#cases" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="user/">User</a>: Keep an ORM row and an API response independent while preserving canonical field names and native
-  validation.</li>
-<li><a href="payment/">Payment</a>: Convert cents and dollars in opposite directions while deriving currency from operation
-  context.</li>
-<li><a href="order/">Order</a>: Compose nested scalar, optional, and list mappings while preserving sparse partial updates.</li>
+<li><a href="user/">User</a>: Keep a database record and an API response independent while each model validates its own data.</li>
+<li><a href="payment/">Payment</a>: Convert between cents and dollars while using the currency information available at runtime.</li>
+<li><a href="order/">Order</a>: Map nested values, optional fields, and lists while keeping partial updates sparse.</li>
+<li><a href="checkout/">Checkout</a>: Translate a validated API checkout into an in-memory SQLAlchemy row and back.</li>
 </ul>
-<p>Read the cases after the <a href="../examples/">core examples</a> and before the <a href="../adapters/">adapter guide</a>.</p>
+<p>Read these cases after the <a href="../examples/">core examples</a> and before the <a href="../adapters/">adapter guide</a>.</p>
 
 
 
