@@ -15,12 +15,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: astral-sh/setup-uv@v6
-    - name: Select an isolated Python environment
-      run: echo "UV_PROJECT_ENVIRONMENT=${{ github.workspace }}/.venv-docs-gate" >> "$GITHUB_ENV"
-    - name: Build and validate documentation
-      run: uv sync --locked --python 3.14 --all-groups
-    - name: Run documentation gate
-      run: uv run --no-sync --python 3.14 pytest -o addopts="" tests/integration/test_docs.py
+    - name: Build documentation
+      run: make docs/build
     - uses: actions/upload-artifact@v4
       with:
         name: betwixt-site

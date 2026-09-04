@@ -1,7 +1,7 @@
 PACKAGE_TARGET:=src/betwixt
 UV_PROJECT_ENVIRONMENT?=$(CURDIR)/.venv
 export UV_PROJECT_ENVIRONMENT
-UV_RUN:=uv run --no-sync
+UV_RUN:=uv run
 NO_EXTRAS_TESTS:=tests/integration/test_no_extras.py tests/unit
 NO_EXTRAS_COVERAGE:=--cov=betwixt.annotations --cov=betwixt.adapters.base --cov=betwixt.adapters.dataclass --cov=betwixt.adapters.registry --cov=betwixt.adapters.typeddict --cov=betwixt.betwixt --cov=betwixt.compiler --cov=betwixt.constants --cov=betwixt.constructs --cov=betwixt.errors --cov=betwixt.refs --cov=betwixt.types
 NO_EXTRAS_PYTEST:=-m pytest -o addopts="" --junitxml=.junit.xml $(NO_EXTRAS_COVERAGE) --cov-report=term-missing --cov-report=xml:.coverage.xml --cov-fail-under=100
