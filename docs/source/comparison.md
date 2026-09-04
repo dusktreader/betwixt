@@ -1,17 +1,16 @@
 # Comparison
 
-Applications regularly carry the same concept through several boundaries: a web request, a domain object, a persistence
-record, a message, or a response. Each representation has its own ownership, validation rules, naming, and shape, so
-translation logic appears wherever those representations meet. When that logic is spread across the models on either
-side,
-it becomes difficult to discover, test, and keep symmetric where symmetry is intended.
+Most applications represent the same thing in several places. It might appear as a web request, an application model, a
+database row, a message, or a response. Each version has its own job, so the names, validation, and shape can differ.
+Without a clear home, conversion rules end up scattered across the models at each boundary. That makes them harder to
+find, test, and keep in sync.
 
-Pydantic and SQLAlchemy provide a concrete example of this broader problem. Each library does its own job well. The
-friction appears at the boundary, where one representation has to become the other. Betwixt makes that translation a
-named, inspectable relationship instead of scattering it across model configuration and framework hooks.
+Pydantic and SQLAlchemy make this problem easy to see. Each library does its own job well. The friction appears when one
+representation needs to become the other. Betwixt gives that conversion a name and a home. That keeps it out of model
+settings and framework-specific hooks.
 
 
-## The boundary problem
+## The problem at the boundary
 
 Consider an API account with a display name and a dollar balance. The database stores first and last names separately,
 keeps money as integer cents, and uses storage-specific column names:
@@ -30,9 +29,8 @@ class AccountRow(Base):
     amount_cents: Mapped[int] = mapped_column("balance_cents")
 ```
 
-One common alternative is to make each framework participate in the conversion. The request model may normalize or split
-the display name, the ORM model may expose convenience properties, and the endpoint may still need to convert dollars to
-cents:
+One way to handle this is to make each framework help with the conversion. The request model can split the display name,
+the database model can expose convenience properties, and the endpoint can convert dollars to cents:
 
 ```python
 class AccountRequest(BaseModel):
@@ -68,18 +66,17 @@ def response_from_row(row: AccountRow) -> AccountResponse:
     )
 ```
 
-This can work, but the request and response rules are now distributed across model methods, ORM properties, and endpoint
-code. It is easy for one direction to change without updating the other, and the boundary behavior is no longer visible
-from one declaration.
+This can work, but the request and response rules are now spread across model methods, database properties, and endpoint
+code. One direction can change without the other being updated, and you cannot see the whole conversion in one place.
 
-You can imagine that as a project grows and complexity increases, the mappings grow more scattered and obsfucated by
-other business logic. Understanding how one data type is translated to the other can become a chore.
+As the project grows, conversion rules can get mixed in with unrelated business logic. Finding out how one model becomes
+another turns into detective work.
 
 
-## The explicit relationship
+## Put the relationship in one place
 
-Betwixt keeps the models focused and puts the representation differences in one declaration. The field refs use
-canonical Python attributes, not `displayName`, `given_name`, or `balance_cents`:
+Betwixt keeps each model focused and puts the differences in one mapping. The field references use the model's canonical
+Python attributes, not `displayName`, `given_name`, or `balance_cents`:
 
 ```python
 from betwixt import Betwixt, expand_rightward, field_refs, map_leftward, map_pairwise
@@ -107,7 +104,7 @@ class AccountTwixt(Betwixt):
     )
 ```
 
-The same `AccountTwixt` produces the ORM row for a request and reconstructs the API model for a response:
+A single `AccountTwixt` can create the database row from a request and rebuild the API model for a response:
 
 ```python
 account = AccountRequest(displayName="Ada Lovelace", balanceDollars=123.45)
@@ -115,13 +112,16 @@ row = AccountTwixt().rightward(account)
 response = AccountTwixt().leftward(row)
 ```
 
-The declaration names both directions and puts the split, merge, and cents conversion next to one another. Pydantic
-still validates its native model, SQLAlchemy still owns its ORM model, and the mapping layer owns only the translation
-between them. The shared `id` field is not declared because its name and type already match; Betwixt maps it implicitly.
-That separation makes the boundary easier to understand, test, and change.
+The declaration names both directions and keeps the split, merge, and cents conversion together.
 
-Betwixt is not a serializer, validator, ORM, or schema generator. It is the explicit peer-to-peer translation layer
-between those concerns.
+Pydantic still validates its model. SQLAlchemy still manages its database model. The mapping owns only the conversion
+between them.
+
+The shared `id` field already matches on both sides, so Betwixt maps it automatically. This makes the boundary easier to
+understand, test, and change.
+
+Betwixt is not a serializer, validator, ORM, or schema generator. It is the place where those different models are
+explicitly translated into one another.
 
 
 ## What's next

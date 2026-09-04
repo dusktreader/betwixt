@@ -1,9 +1,9 @@
 # Order case
 
-The Order case composes the other ideas. The shared fixture contains an `identifier`, an optional `address`, a list of
-`items`, and an optional `note`; it does not contain a customer field. Nested mappings preserve scalar, optional, and
-list shapes, while a context derivation passes an order-level request context to every line-item mapping once per
-nested boundary.
+Orders bring several mapping ideas together. This example contains an `identifier`, an optional `address`, a list of
+`items`, and an optional `note`. It does not contain a customer field.
+Nested mappings preserve scalar, optional, and list shapes. A context derivation passes order-level request context to
+every line-item mapping once per nested boundary.
 
 
 ## Example
@@ -42,5 +42,5 @@ translated = mapping.rightward(Order(42, None, []), context={"minor_units": 100}
 patch = mapping.rightward_partial({"items": []})
 ```
 
-The patch is sparse: omitted fields remain omitted, present `None` remains present, and defaults never appear in a
-partial result.
+The patch is sparse: omitted fields stay omitted, present `None` stays present, and defaults never appear in a partial
+result.

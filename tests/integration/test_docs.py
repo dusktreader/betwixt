@@ -94,6 +94,7 @@ def test_documentation_navigation_pages_are_complete() -> None:
         "cases/user.md",
         "cases/payment.md",
         "cases/order.md",
+        "cases/checkout.md",
         "adapters.md",
         "comparison.md",
         "api-reference.md",

@@ -1,9 +1,8 @@
 # Payment case
 
-The Payment case demonstrates an intentionally asymmetric boundary. A left-side amount in cents becomes a right-side
-decimal amount, while the reverse direction converts dollars back to cents with its own callable. Both directions
-receive
-the keyword-only `ctx` context for the minor-unit policy and currency.
+Payments often use different representations in different parts of an application. This example keeps the amount in
+cents on one side and converts it to dollars on the other. The reverse direction has its own conversion back to cents.
+Both directions receive the keyword-only `ctx` context, which supplies the minor-unit policy and currency.
 
 
 ## Example

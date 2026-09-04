@@ -1,18 +1,17 @@
 # Features
 
-Betwixt translates between two independent, adapter-backed types. This guide covers the declaration features that let a
-mapping stay explicit where the two models differ and automatic where they agree.
+Betwixt helps two models exchange data, even when they have different shapes. Matching fields map automatically, while
+explicit declarations handle the differences.
 
 
 ## Declare a mapping
 
-A `Betwixt` child declares its two sides with `left` and `right`. Field refs identify both the side and the canonical
-field rather than passing an unvalidated string. They also let Betwixt validate the field against the declared adapter
-when the child class is created.
+A `Betwixt` child connects two models through `left` and `right`. Field references tie each field to its model and name.
+Betwixt checks each reference against the adapter when it creates the mapping class.
 
-Within that class body, `(L, R) = field_refs(left, right)` establishes the field references. References use canonical
-Python field names, even when an adapter exposes a wire or database alias. This keeps declarations stable and prevents a
-database or serialization name from leaking into mapping logic.
+Inside the class body, `(L, R) = field_refs(left, right)` creates those references.
+They use canonical Python field names, meaning the names on the model itself.
+An adapter can expose a different JSON or database name, but the mapping stays independent of those details.
 
 
 ### Example
@@ -39,30 +38,32 @@ class UserTwixt(Betwixt):
     (L, R) = field_refs(left, right)
 ```
 
-The declared mapping translates a model instance.
+With the declaration in place, the mapping can translate a model instance.
 
 ```python
 user = UserTwixt().rightward(User("Ada"))
 assert user == UserView("Ada")
 ```
 
-The class declaration is compiled when the child class is created. Invalid references, missing adapters, incompatible
-nested shapes, and invalid callable signatures fail at declaration time rather than on an unrelated translation.
+Betwixt compiles the declaration when the child class is created. It checks references, adapters, nested shapes, and
+supported parts of function signatures near the declaration. Problems that depend on runtime arguments can still appear
+when a translation runs.
 
 
 ## Implicit same-name mapping
 
-### Why it exists
+### Matching fields map automatically
 
-Peer types often share ordinary fields. Implicit mapping removes boilerplate for those fields while leaving declarations
-available for the exceptional ones.
+Two models often share ordinary fields. Implicit mapping means you do not have to repeat declarations for those fields,
+while explicit declarations remain available for exceptions.
 
 
-### Semantics
+### How it works
 
-In each direction, a same-name source and destination field map implicitly when their annotations are compatible. The
-source value is copied through the source adapter. An explicit producer for that destination takes precedence over the
-implicit producer. Incompatible annotations are not coerced implicitly, and a present `None` is still a present value.
+In either direction, matching field names map implicitly when their annotations are compatible. Betwixt reads the source
+through its adapter and copies the value to the destination. An explicit mapping wins when it runs; during a partial
+translation, an incomplete explicit mapping can leave the implicit value in place. Betwixt does not implicitly coerce
+incompatible annotations. A key whose value is `None` is still present, so it is not treated like an absent key.
 
 
 ### Example
@@ -91,33 +92,32 @@ class PersonTwixt(Betwixt):
     (L, R) = field_refs(left, right)
 ```
 
-The application shows compatible same-name fields being copied implicitly through the adapters.
+Here, the compatible same-name fields are copied through the adapters without declarations for either field.
 
 ```python
 view = PersonTwixt().rightward(Person("Ada", 36))
 assert view == PersonView("Ada", 36)
 ```
 
-The mappings between `name` and `age` are not explicitly declared. Because the field names and annotations match between
-the two data types, the mapping happens implicitly.
+There are no explicit mappings for `name` or `age`. Their names and annotations match, so Betwixt maps them implicitly.
 
 
 ## Explicit directional field mapping
 
-### Why it exists
+### One-way field transformations
 
-Different names, different shapes, and one-way business rules need an explicit transformation. Directional declarations
-also prevent Betwixt from inventing an inverse for a write-only or computed field.
+An explicit transformation helps when names or shapes differ, or when a business rule works in only one direction.
+Direction also matters. Betwixt will not invent an inverse for a write-only or computed field.
 
 
-### Semantics
+### How it works
 
-`map_rightward` reads one or more left fields and writes one right field. `map_leftward` does the reverse. The callable
-receives values in the order of its source references. `map_pairwise` declares both independent callables in one record;
-it does not require the transformations to be mathematical inverses.
+`map_rightward` reads one or more left fields and writes one right field. `map_leftward` does the reverse. Each function
+receives its referenced source values in reference order. `map_pairwise` records independent functions for both
+directions, so the two functions do not need to be mathematical inverses.
 
-Each map runs only when every referenced source key is present. In a full operation, the adapter reads attributes or
-keys.
+Each map runs only when every referenced source key is present. During a full operation, the adapter reads the model's
+attributes or mapping keys for you.
 
 
 ### Example
@@ -160,30 +160,31 @@ class AccountTwixt(Betwixt):
     )
 ```
 
-The application demonstrates directional callable behavior: each producer runs only in the direction it declares.
+This example shows the one-way rule: each one-way mapping function runs only in the direction it declares.
 
 ```python
 account_view = AccountTwixt().rightward(Account("Ada", "Lovelace", "ada@example.com"))
 assert account_view == AccountView("Ada Lovelace", "mailto:ada@example.com")
 ```
 
-The example shows the factories' directional contracts. A declaration may use only the factory for the direction it
-supports; there are no inferred reverse declarations.
+One-way mapping functions support only their named direction. Pairwise functions support both directions.
+Betwixt does not infer a reverse declaration for a one-way function.
 
 
 ## Expansion
 
-### Why it exists
+### One field split into several fields
 
-One source field sometimes contains several destination fields, such as a full name becoming first and last names.
-Expansion expresses that fan-out without requiring a destination constructor or an inverse assumption.
+Sometimes one source field needs to fill several destination fields. For example, a full name can become first and last
+names. Expansion handles that split without requiring a destination constructor or guessing a reverse mapping.
 
 
-### Semantics
+### How it works
 
-`expand_rightward` has exactly one left source and at least two right destinations. `expand_leftward` has exactly one
-right source and at least two left destinations. The callable receives the one source value and must return a tuple with
-exactly as many values as destination references. Tuple positions, not names, determine assignment order.
+`expand_rightward` takes one left source and at least two right destinations.
+`expand_leftward` takes one right source and at least two left destinations.
+Each function receives one source value and returns one tuple item per destination.
+Betwixt assigns the items by position, not by field name.
 
 
 ### Example
@@ -215,26 +216,25 @@ class ProfileTwixt(Betwixt):
     )
 ```
 
-The result shows expansion tuple order controlling which returned value fills each destination field during a full
-translation.
+The tuple order determines which returned value fills each destination field during a full translation.
 
 ```python
 view = ProfileTwixt().rightward(Profile("Ada Lovelace"))
 assert view == ProfileView("Ada", "Lovelace")
 ```
 
-Returning a list, the wrong tuple length, or another shape raises `ExpansionError`.
+Returning a list, the wrong tuple length, or any other shape raises `ExpansionError`.
 
 
 ## Reductions
 
-### Why it exists
+### A value from the whole model
 
-Some destination values depend on the whole source object rather than a declared subset of fields. Reductions are suited
-to totals, signatures, summaries, and other source-wide calculations.
+Some values depend on the complete source model instead of just a few fields.
+Reductions work well for totals, signatures, summaries, and other calculations that need the whole object.
 
 
-### Semantics
+### How it works
 
 `reduce_rightward` receives the complete left object and writes one right field. `reduce_leftward` receives the complete
 right object and writes one left field.
@@ -267,7 +267,7 @@ class BasketTwixt(Betwixt):
     )
 ```
 
-The application passes the complete source object to the reduction before writing its single result field.
+The reduction receives the complete source object and writes its one result field.
 
 ```python
 assert BasketTwixt().rightward(Basket((3, 4))) == BasketView(7)
@@ -276,17 +276,17 @@ assert BasketTwixt().rightward(Basket((3, 4))) == BasketView(7)
 
 ## Projections
 
-### Why it exists
+### The whole destination at once
 
-When a conversion is already defined by a complete object-level function, field-by-field producers add noise. A
-projection lets the callable own the entire destination shape.
+When one object-level function already defines the conversion, field-by-field mappings add noise. A projection lets one
+function build the entire destination shape.
 
 
-### Semantics
+### How it works
 
 `project_rightward` receives the complete left object and `project_leftward` receives the complete right object. The
-callable must return an instance or mapping accepted by the destination adapter. The adapter validates the projection,
-rejects unknown fields, and extracts canonical destination values.
+function must return an instance or mapping accepted by the destination adapter. The adapter validates the projection,
+rejects unknown fields, and extracts the destination's canonical field values.
 
 
 ### Example
@@ -317,7 +317,7 @@ class EventTwixt(Betwixt):
     )
 ```
 
-The result demonstrates projection construction: one callable builds the complete destination object for the adapter.
+One function builds the complete destination object for the adapter.
 
 ```python
 assert EventTwixt().rightward(Event(7, "ready")).text == "7: ready"
@@ -326,23 +326,22 @@ assert EventTwixt().rightward(Event(7, "ready")).text == "7: ready"
 
 ## Nested mappings and containers
 
-### Why it exists
+### Reuse mappings inside nested values
 
-Nested models need the same boundary discipline as top-level models. Nested declarations reuse a child `Twixt` rather
-than duplicating its rules, and container traversal lets that child mapping work at any supported depth.
+Nested models need the same clear boundary as top-level models. A nested declaration reuses a child `Twixt` instead of
+duplicating its rules. Betwixt can also walk supported containers and apply the child mapping to each nested element.
 
 
-### Semantics
+### How it works
 
-`nested_rightward`, `nested_leftward`, and `nested_pairwise` delegate a field to another `Betwixt` via `via`. The outer
-and inner annotations must have compatible shapes. Supported shapes include scalars, optional values, lists, variadic
-tuple, fixed tuple, dictionaries, and sets. Dictionary keys pass through unchanged. Empty containers make no inner
-calls.
+`nested_rightward`, `nested_leftward`, and `nested_pairwise` reuse another `Betwixt` through `via`. The outer and inner
+annotations must describe compatible shapes. Supported shapes include scalars, optional values, lists, variadic tuples,
+fixed tuples, dictionaries, and sets. Dictionary keys pass through unchanged. Empty containers make no inner calls.
 
-The nested context selector, when supplied, is called once with the outer context. Its result is reused for every
-element of that nested value. A nested declaration's callable then receives the translated inner value and may transform
-it. Malformed values report their container path, such as `lines[0]`. A present `None` is distinct from an absent key
-and is accepted only when the annotation is optional.
+If supplied, the nested context selector receives the outer context once, positionally. Betwixt reuses its result for
+every element in that nested value. The nested function then receives the translated inner value and may transform it.
+Malformed values include their container path, such as `lines[0]`.
+A present `None` is different from an absent key. It is accepted only when the annotation is optional.
 
 
 ### Example
@@ -394,30 +393,29 @@ class InvoiceTwixt(Betwixt):
     )
 ```
 
-The application demonstrates nested traversal and context reuse across each item in the container.
+This example walks the list and reuses the derived context for each item.
 
 ```python
 invoice_view = InvoiceTwixt().rightward(Invoice([Line(250)]), context={"minor_units": 100})
 assert invoice_view == InvoiceView([LineView(2.5)])
 ```
 
-In this example, the inner callable's `ctx` receives the derived value. The list is traversed and each `Line` is
-translated with the same derived context. Malformed values report their container path, such as `lines[0]`. A present
-`None` is distinct from an absent key; `None` is accepted only when the annotation is optional.
+The inner function's `ctx` receives the derived value. Each `Line` uses that same context. Malformed values include a
+container path such as `lines[0]`. A present `None` is distinct from an absent key. Optional annotations accept it.
 
 
 ## Implicit-mapping controls
 
-Same-name compatibility is useful until a boundary needs every producer to be deliberate. Implicit mapping can be
-disabled globally, or a single same-name pair can be suppressed while other compatible fields remain automatic.
+Same-name mapping is convenient until a boundary requires every field to be deliberate. You can disable implicit mapping
+globally, or suppress one same-name pair while leaving other compatible fields automatic.
 
-The class attribute `disable_implicit_mapping = True` suppresses all compatible same-name producers. Narrower controls
-are available through `disable_implicit_rightward`, `disable_implicit_leftward`, or `disable_implicit_pairwise`; each
-anchor must name the same canonical field on both sides.
+You can set `disable_implicit_mapping = True` on the class to suppress all compatible same-name mappings.
+For narrower control, use `disable_implicit_rightward`, `disable_implicit_leftward`, or `disable_implicit_pairwise`.
+Each control must point to the same canonical field on both sides.
 
 
-The following example suppresses the implicit `label` producer so the source value does not cross this boundary. The
-destination model supplies its own fallback.
+This example suppresses the automatic `label` mapping, so the source value does not cross the boundary. The destination
+model supplies its own fallback.
 
 ```python
 from dataclasses import dataclass
@@ -444,7 +442,7 @@ class SourceTwixt(Betwixt):
     disable_label = disable_implicit_rightward(left=L.label, right=R.label)
 ```
 
-The source `label` is omitted while the compatible `value` field still maps implicitly:
+The source `label` is omitted, while compatible `value` still maps implicitly:
 
 ```python
 assert SourceTwixt().rightward(Source(3, "ignored")) == Destination(3)
@@ -453,17 +451,17 @@ assert SourceTwixt().rightward(Source(3, "ignored")) == Destination(3)
 
 ## Declaration order and overlap
 
-### Why it exists
+### Predictable overlapping declarations
 
-Several declarations may intentionally write the same destination, for example when a basic value is refined by a
-business rule. A deterministic order makes that choice visible in the class body.
+Several declarations can write the same destination. A business rule may refine a basic value. The class body makes the
+precedence visible and predictable.
 
 
-### Semantics
+### How it works
 
-Implicit compatible fields seed the result first. Explicit declarations then run in class-body order. The last write
-wins. This includes overlapping maps, expansions, nested producers, reductions, and project results. A producer that
-cannot run because its source is incomplete does not write a value.
+Betwixt starts with compatible same-name fields. It then runs explicit declarations in class-body order. The last write
+wins for overlapping maps, expansions, nested mappings, reductions, and projections. A mapping with incomplete source
+fields cannot run. It does not write a value.
 
 
 ### Example
@@ -506,19 +504,20 @@ assert SourceTwixt().rightward(Source(100, expedited=True)) == Destination(125)
 
 ## Partial translation
 
-### Why it exists
+### Only the fields you received
 
-Patch handlers often need to translate only fields supplied by a client. Partial translation avoids inventing missing
-values or constructing a destination model prematurely.
+Patch handlers often receive only some fields from a client. Partial translation keeps missing values missing. It avoids
+inventing them or constructing a destination model too early.
 
 
-### Semantics
+### How it works
 
-`rightward_partial` accepts a mapping of canonical left keys and returns a sparse plain dictionary of canonical right
-keys. `leftward_partial` does the reverse. Unknown source keys and non-mapping inputs raise `PartialInputError`. A map
-or expansion runs when its required source keys are present; a reduction requires every source field before it runs.
-Projections are skipped, and nested partial mappings preserve supported container shapes. Partial operations never apply
-model construction or defaults.
+`rightward_partial` accepts canonical left keys and returns a sparse plain dictionary of canonical right keys.
+`leftward_partial` does the reverse. Unknown source keys and non-mapping inputs raise `PartialInputError`. A map or
+expansion runs when its required source keys are present. A reduction waits for every source field. Projections are
+skipped, and nested partial mappings preserve supported container shapes. Partial operations do not construct the
+destination model or apply its defaults. A reduction may construct a temporary source model, but only when every source
+field is present.
 
 
 ### Example
@@ -552,15 +551,15 @@ class ProductTwixt(Betwixt):
     total = reduce_rightward(right=R.total, rightward=lambda product: product.cents * product.quantity / 100)
 ```
 
-When only the price is supplied, the map can run but the reduction cannot because `quantity` is absent:
+With only `cents`, the price map can run, but the reduction cannot because `quantity` is absent:
 
 ```python
 mapping = ProductTwixt()
 assert mapping.rightward_partial({"cents": 2500}) == {"dollars": 25.0}
 ```
 
-Supplying the reduction's complete source fields adds its result, while a pairwise mapping contributes independently
-when its own source key is present:
+Once the reduction's complete source fields are present, it contributes its result. The pairwise mapping contributes
+independently whenever its own source key is present:
 
 ```python
 assert mapping.rightward_partial({"cents": 2500, "quantity": 2, "label": "widget"}) == {
@@ -577,22 +576,21 @@ assert mapping.leftward_partial({"dollars": 25.0, "label": "WIDGET"}) == {
 
 ## Explanations and unmapped-field diagnostics
 
-### Why they exist
+### Why a field did not map
 
-Native construction should remain the source of truth for required fields, but a missing field needs an actionable
-reason.
-Declaration-only explanations expose the compiler's view without reading a value or constructing either type.
+The destination model still decides which fields are required. When a field is missing, you need to know why.
+Declaration-only explanations show Betwixt's view without reading a value or constructing either model.
 
 
-### Semantics
+### How it works
 
-`explain_rightward()` and `explain_leftward()` return a `MappingExplanation` whose `entries` describe each destination
-as `implicit`, `explicit`, `omitted`, or `unmapped`. Entries include the source field and annotations when known.
+`explain_rightward()` and `explain_leftward()` return a `MappingExplanation`. Its `entries` classify each destination as
+`implicit`, `explicit`, `omitted`, or `unmapped`. They include the source field and annotations when known.
+
 Full translation raises `UnmappedFieldError` when a required destination field has no produced value. The exception
-includes direction, source and destination types, canonical fields, annotations, omission reason, the explanation
-method,
-and remedies. Native constructor, validation, callable, derivation, and set-insertion errors retain their original
-types.
+includes the direction, source and destination types, canonical fields, annotations, omission reason, the explanation
+method, and remedies. Errors from model construction, validation, functions, derived values, and set insertion retain
+their original types.
 
 
 ### Example
@@ -620,7 +618,7 @@ class IncompleteTwixt(Betwixt):
     (L, R) = field_refs(left, right)
 ```
 
-The application combines the failed translation with diagnostic inspection of the unmapped destination field.
+This example catches the failed translation and then inspects the unmapped destination field.
 
 ```python
 mapping = IncompleteTwixt()
@@ -631,33 +629,39 @@ except UnmappedFieldError as error:
     print(mapping.explain_rightward().entries)
 ```
 
-The explanation identifies the implicit value and the required field with no producer:
+The explanation identifies the implicit value and the required field that has no mapping:
 
 ```text
 [MappingEntry(destination='value', status='implicit', source='value', reason=None, annotation=<class 'int'>, source_annotation=<class 'int'>), MappingEntry(destination='required', status='unmapped', source=None, reason=None, annotation=<class 'str'>, source_annotation=None)]
 ```
 
-An `unmapped` or `omitted` entry is resolved by an explicit producer or the appropriate implicit-mapping control.
+For a required field, an `unmapped` entry needs an explicit mapping. An optional or defaulted field can remain unmapped.
+An `omitted` required field may need its suppressing control removed.
+An explicit mapping may be needed if the field needs a different transformation.
+Incompatible annotations also need an explicit mapping, not an implicit-mapping control.
 
 
-## Context and callable rules
+## Runtime context for functions
 
-### Why they exist
+### Runtime values outside models
 
-Translation sometimes depends on request metadata, currency, tenant, or another runtime value. Context keeps that
-application concern outside the models while making its injection point unambiguous.
+A translation may depend on request metadata, currency, tenant, or another runtime value. Context keeps that application
+data out of the models and makes the injection point explicit.
 
 
-### Semantics
+### How it works
 
-Operations have the signatures `rightward(value, *, context=None)` and `leftward(value, *, context=None)`. Map,
-reduction, projection, and nested wrapper callables receive declared source values in reference order. A callable
-receives context through a final keyword-only parameter named `ctx`; Betwixt calls it as `ctx=...`. Positional `ctx`, or
-a `ctx` parameter that is not final, is invalid.
+Operations have the signatures `rightward(value, *, context=None)` and `leftward(value, *, context=None)`. Map functions
+receive referenced source values in reference order. Reductions and projections receive the complete source object. A
+function around a nested mapping receives the translated inner value.
 
-Nested context selectors are different: they receive the outer context as one positional argument, once per nested
-boundary, and their return value is passed to each inner translation. Context is passed unchanged and is not validated
-or coerced.
+These mapping functions can receive context through a final keyword-only parameter named `ctx`. That includes maps,
+expansions, reductions, projections, and nested mappings. Betwixt calls it as `ctx=...`. A positional `ctx`, or a `ctx`
+parameter that is not final, is invalid.
+
+Nested context selectors work differently: they receive the outer context as one positional argument at each nested
+boundary. Their return value goes to each inner translation. Betwixt passes context unchanged; it does not validate or
+coerce it.
 
 
 ### Example
@@ -688,7 +692,7 @@ class AmountTwixt(Betwixt):
     )
 ```
 
-The result demonstrates context injection into a keyword-only `ctx` parameter at application time.
+At application time, Betwixt injects context into the function's keyword-only `ctx` parameter.
 
 ```python
 assert AmountTwixt().rightward(Amount(2500), context={"minor_units": 100}) == AmountView(25.0)
@@ -697,21 +701,21 @@ assert AmountTwixt().rightward(Amount(2500), context={"minor_units": 100}) == Am
 
 ## Adapter boundaries
 
-### Why they exist
+### Model concerns at the model boundary
 
-Models should keep their native validation, construction, and persistence concerns. Adapters let Betwixt inspect fields,
-read values, validate projections, and construct destinations without adding mapping methods to those models.
+Models should keep their own validation, construction, and persistence behavior. Adapters let Betwixt inspect fields and
+read values. They validate projections and construct destinations without adding mapping methods to the models.
 
 
-### Semantics
+### How it works
 
-Dataclasses and `TypedDict` are supported directly. Pydantic and SQLAlchemy support is optional and selected by the
-appropriate extra. Field references and partial keys always use canonical Python attribute names, not serialization
-aliases or database column names. Pydantic performs its own coercion, defaults, and validation. SQLAlchemy relationships
-must already be loaded; Betwixt never creates sessions, loads relationships, persists, flushes, commits, or refreshes.
+Dataclasses and `TypedDict` work directly. Pydantic and SQLAlchemy support is optional and selected by the appropriate
+extra. Field references and partial keys always use canonical Python attribute names. Serialization aliases and database
+column names do not apply. Pydantic performs its own coercion, defaults, and validation. SQLAlchemy relationships must
+already be loaded. Betwixt never creates sessions, loads relationships, persists, flushes, commits, or refreshes.
 
-An application can register an `Adapter` for another boundary type. The [adapter guide](adapters.md) describes
-the Pydantic, SQLAlchemy, and `TypedDict` setup details.
+You can register an `Adapter` for another kind of boundary value. The [adapter guide](adapters.md) covers the Pydantic,
+SQLAlchemy, and `TypedDict` setup details.
 
 
 ### Example
@@ -738,8 +742,7 @@ class RecordTwixt(Betwixt):
     (L, R) = field_refs(left, right)
 ```
 
-The application demonstrates the adapter/native boundary: Betwixt constructs the native `TypedDict` result without
-changing the source model.
+Betwixt constructs the `TypedDict` result without changing the source model. That is the adapter boundary in action.
 
 ```python
 assert RecordTwixt().rightward(Record("Ada")) == {"name": "Ada"}
@@ -748,7 +751,7 @@ assert RecordTwixt().rightward(Record("Ada")) == {"name": "Ada"}
 
 ## What's next
 
-- Explore the [case studies](cases/index.md) to see these features applied to realistic boundaries.
-- Read the [adapter guide](adapters.md) for `TypedDict`, Pydantic, SQLAlchemy, and custom adapters.
-- Browse the [reference examples](examples.md) for complete standalone source files.
-- Check the [API reference](api-reference.md) for the complete public surface.
+- The [case studies](cases/index.md) show these features applied to realistic boundaries.
+- The [adapter guide](adapters.md) covers `TypedDict`, Pydantic, SQLAlchemy, and custom adapters.
+- The [reference examples](examples.md) include complete standalone source files.
+- The [API reference](api-reference.md) documents the complete public surface.
