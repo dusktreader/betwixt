@@ -1,29 +1,34 @@
 # Adapters
 
-Betwixt includes adapters for dataclasses, `TypedDict`, Pydantic, and SQLAlchemy. A custom adapter extends the same
-boundary contract to an application-owned type that does not fit one of those integrations.
+Betwixt already knows how to work with dataclasses, `TypedDict`, Pydantic models, and SQLAlchemy models. If your data
+lives in a different kind of object, a custom adapter teaches Betwixt how to inspect it and build it. The adapter keeps
+that type-specific code separate from your mapping declarations.
 
 
-## Why a custom adapter
+## Why write a custom adapter
 
-Adapters keep model-specific inspection and construction out of the mapping declaration. This is useful for value
-objects, legacy records, immutable structures, or types from another library whose fields are not exposed as ordinary
-dataclass, Pydantic, TypedDict, or SQLAlchemy fields.
+Use a custom adapter when your type stores or creates data in its own way. Common examples include value objects and
+immutable structures, legacy records, and types from another library. Instead of teaching every mapping about those
+details, you teach the adapter once.
 
 
-## Adapter contract
+## What an adapter does
 
-An adapter identifies the type and provides five operations. `fields()` returns canonical names and annotations.
-`read()` gets one field from an existing value. `project()` extracts canonical fields from a complete projected value.
-`construct()` creates a native destination value, and `required()` reports whether a destination field must be produced
-before construction.
+An adapter describes a type and answers five questions:
 
-The adapter owns the type's native boundary behavior. Betwixt does not validate or coerce values on its behalf.
+- `fields()` says which fields the type has and what their types are.
+- `read()` gets one field from an existing value.
+- `project()` extracts the fields from a complete value.
+- `construct()` builds a new value from mapped fields.
+- `required()` says whether a destination field must be present before construction.
+
+Use the model's canonical Python field names here. The adapter can handle names used outside the object. Betwixt leaves
+validation and type conversion to the type itself.
 
 
 ## Example
 
-The following custom type stores its data in private attributes. Its adapter exposes a stable canonical field surface:
+This custom type stores its data in private attributes. Its adapter gives Betwixt a clean, stable view of those fields:
 
 ```python
 from collections.abc import Mapping
@@ -63,8 +68,8 @@ adapter: Adapter = LegacyUserAdapter()
 register_adapter(LegacyUser, adapter)
 ```
 
-The registration must happen before the `Betwixt` child is declared, because adapters are resolved and snapshotted
-during class declaration:
+Register the adapter before declaring the `Betwixt` child.
+Betwixt remembers the adapter when it creates the mapping class:
 
 ```python
 from dataclasses import dataclass
@@ -100,20 +105,19 @@ payload = twixt.leftward(legacy)
 assert payload == UserPayload("Ada", "ada@example.com")
 ```
 
-The custom adapter can now participate in the same full, partial, nested, and projected operations as a built-in
-adapter.
+The custom adapter can now use the same mapping features as a built-in adapter, including complete, partial, nested, and
+projected mappings.
 
-The [feature guide](features.md) explains the adapter boundary in more detail, and the [reference examples](examples.md)
-include a combined mapping for their different representations.
+The [feature guide](features.md) explains the adapter boundary in more detail.
+The [reference examples](examples.md) show combined mappings for models with different representations.
 
 
 ## Built-in adapters
 
-Pydantic and SQLAlchemy adapters are available in `betwixt` as optional extras in the package. They can be installed
-like:
+Pydantic and SQLAlchemy support is available as optional package extras. Install both with:
 
 ```shell
-uv add betwixt[pydantic,sqlalchemy]
+uv add "betwixt[pydantic,sqlalchemy]"
 ```
 
 

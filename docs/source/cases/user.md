@@ -1,15 +1,17 @@
 # User case
 
-The User case is the running boundary narrative: an ORM row and an API response are peers, not parent and child
-classes. The optional fixture uses `email` as its canonical Python attribute while its database column uses a different
-name. Betwixt maps that attribute to a Pydantic response, applies an explicit display-name transform, and
-leaves validation to Pydantic. The shared dataclass fixture has no default declaration, so missing required fields are
-reported rather than silently filled. No engine or session is needed.
+An API response and a database row can describe the same user without being built the same way.
+In this example, `email` is the canonical Python attribute, even though the database column has a different name.
+Betwixt maps that attribute to a Pydantic response, applies an explicit display-name transform, and leaves validation to
+Pydantic.
+
+The dataclass in this example has no default declaration, so Betwixt reports missing required fields instead of quietly
+filling them. No database engine or session is needed.
 
 
 ## Example
 
-The example also performs a partial patch with canonical keys. A source serialization alias never changes those keys.
+The example also performs a partial patch with canonical keys. A serialization alias never changes those keys.
 
 ```python
 from dataclasses import dataclass

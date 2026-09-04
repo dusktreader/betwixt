@@ -5,14 +5,12 @@
 _Betwixt your data models lives a new, declarative mapping layer._
 
 
-
 ## Overview
 
-Betwixt maps peer boundary models without coupling them to one another. Thus, the data models for each layer can remain
-purely focused on their domain while Betwixt manages data mapping between them. Betwixt owns only the translation; each
-model retains validation, serialization, persistence, and other concerns of its domain. You need only declare a derived
-`Betwixt` class for every mapping that you need. Then, simply request a "leftward" or "rightward" mapping from a model
-instance to obtain a fully mapped instance.
+If you've ever worked with advanced data types such as Pydantic models or SQLAlchemy ORM models, you know that
+translating data between them can be a tricky operation. Two models can describe the same thing while using different
+field names, nesting, or representations. Betwixt lets you describe those differences once, then move data between the
+models in either direction.
 
 
 ## Basic Example

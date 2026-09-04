@@ -19,6 +19,8 @@ These standalone source files follow the teaching arc from basic mappings throug
   SQLAlchemy destination
 - [`combined.py`](https://github.com/dusktreader/betwixt/blob/main/examples/combined.py): bidirectional Pydantic and
   SQLAlchemy boundary mapping
+- [`checkout.py`](https://github.com/dusktreader/betwixt/blob/main/examples/checkout.py): a complete checkout mapping
+  with nested lines, runtime currency context, aliases, and a persisted total
 
 The reference files are source examples, not a Python package or command-line interface. Run `betwixt-demo` for the
 guided, executable walkthrough. The demo is implemented separately under `betwixt_demo`.
